@@ -1,15 +1,18 @@
-<!-- view_patient.php -->
 <?php
 session_start();
 require 'db_connect.php';
 include 'header.php';
 
-if (!isset($_SESSION['doctor_id'])) {
+// Determine if user is an admin or a doctor
+$isAdmin = isset($_SESSION['admin_id']);
+$isDoctor = isset($_SESSION['doctor_id']);
+
+// If neither is logged in, redirect to login
+if (!$isAdmin && !$isDoctor) {
     header("Location: login.php");
     exit();
 }
 
-$doctor_id = $_SESSION['doctor_id'];
 $patient_id = $_GET['patient_id'] ?? null;
 
 if (!$patient_id) {
@@ -17,22 +20,38 @@ if (!$patient_id) {
     exit();
 }
 
-// Fetch patient details
-$stmt = $pdo->prepare("
-    SELECT 
-        PatientName, DOB, Address, City, 
-        ContactNumber, PatientInformation, 
-        Prescriptions, Diagnoses, PreferredPharmacy
-    FROM 
-        Patient
-    JOIN 
-        DoctorPatient ON Patient.PatientID = DoctorPatient.PatientID
-    WHERE 
-        Patient.PatientID = :patient_id 
-        AND DoctorPatient.DoctorID = :doctor_id
-");
-$stmt->execute(['patient_id' => $patient_id, 'doctor_id' => $doctor_id]);
-$patient = $stmt->fetch();
+if ($isDoctor) {
+    $doctor_id = $_SESSION['doctor_id'];
+
+    $stmt = $pdo->prepare("
+        SELECT 
+            PatientName, DOB, Address, City, 
+            ContactNumber, PatientInformation, 
+            Prescriptions, Diagnoses, PreferredPharmacy
+        FROM 
+            Patient
+        JOIN 
+            DoctorPatient ON Patient.PatientID = DoctorPatient.PatientID
+        WHERE 
+            Patient.PatientID = :patient_id 
+            AND DoctorPatient.DoctorID = :doctor_id
+    ");
+    $stmt->execute(['patient_id' => $patient_id, 'doctor_id' => $doctor_id]);
+    $patient = $stmt->fetch();
+
+} else {
+    $stmt = $pdo->prepare("
+        SELECT 
+            PatientName, DOB, Address, City, 
+            ContactNumber, PatientInformation, 
+            Prescriptions, Diagnoses, PreferredPharmacy
+        FROM 
+            Patient
+        WHERE Patient.PatientID = :patient_id
+    ");
+    $stmt->execute(['patient_id' => $patient_id]);
+    $patient = $stmt->fetch();
+}
 
 if (!$patient) {
     echo "Patient record not found or access is restricted.";
@@ -62,8 +81,8 @@ if (!$patient) {
         <p><strong>Preferred Pharmacy:</strong> <?php echo htmlspecialchars($patient['PreferredPharmacy']); ?></p>
 
         <a href="edit_patient.php?patient_id=<?php echo $patient_id; ?>" class="button">Edit Patient Information</a>
-    <br>
-    <a href="view_records.php" class="button">Back to Patient List</a>
+        <br>
+        <a href="view_records.php" class="button">Back to Patient List</a>
     </div>
 </body>
 </html>

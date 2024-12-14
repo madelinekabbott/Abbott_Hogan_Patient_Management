@@ -10,7 +10,6 @@ if (!isset($_SESSION['doctor_id'])) {
 
 $doctor_id = $_SESSION['doctor_id'];
 
-// Fetch patients associated with the logged-in doctor, showing name, DOB, address, and city
 $stmt = $pdo->prepare("
     SELECT 
         Patient.PatientID, Patient.PatientName, Patient.DOB, Patient.Address, Patient.City 

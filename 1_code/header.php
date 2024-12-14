@@ -1,3 +1,14 @@
+<?php
+
+$dashboardUrl = 'login.php';
+
+if (isset($_SESSION['admin_id'])) {
+    $dashboardUrl = 'admin_dashboard.php';
+}
+elseif (isset($_SESSION['doctor_id'])) {
+    $dashboardUrl = 'doctor_dashboard.php';
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +20,7 @@
 <body>
     <header>
         <nav>
-            <a href="dashboard.php" class="dashboard-icon">
+            <a href="<?php echo htmlspecialchars($dashboardUrl); ?>" class="dashboard-icon">
                 <img src="https://vectorified.com/images/home-icon-png-white-33.png" alt="Dashboard Icon" class="dashboard-img">
             </a> 
         </nav>

@@ -1,5 +1,5 @@
 <?php
-    include 'header_no_dash.php';
+include 'header_no_dash.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -9,9 +9,8 @@
     <title>Log In</title>
     <link rel="stylesheet" href="patient_management_style.css">
     <script>
-        // Display an alert if there's an error in the URL
-        function showErrorPopup() {
-            alert("Invalid Doctor ID or password.");
+        function showErrorPopup(message) {
+            alert(message);
         }
     </script>
 </head>
@@ -19,18 +18,28 @@
     <div class="container">
         <h2>Log In</h2>
         <form action="authenticate.php" method="POST">
-            <label for="doctor_id">Doctor ID:</label>
-            <input type="text" id="doctor_id" name="doctor_id" required><br><br>
+            <label for="username">User ID (Doctor/Admin):</label>
+            <input type="text" id="username" name="username" required><br><br>
 
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required><br><br>
+
+            <label for="role">Role:</label>
+            <select id="role" name="role" required>
+                <option value="doctor">Doctor</option>
+                <option value="admin">Admin</option>
+            </select><br><br>
 
             <input type="submit" value="Log In" class="button">
         </form>
     </div>
     <?php
-    if (isset($_GET['error']) && $_GET['error'] == 1) {
-        echo "<script>showErrorPopup();</script>";
+    if (isset($_GET['error'])) {
+        if ($_GET['error'] === 'doctor') {
+            echo "<script>showErrorPopup('Invalid credentials. If you are having trouble logging in, please contact an admin to reset your password.');</script>";
+        } elseif ($_GET['error'] === 'admin') {
+            echo "<script>showErrorPopup('Invalid credentials. If you need to reset your password, please contact the developer.');</script>";
+        }
     }
     ?>
 </body>

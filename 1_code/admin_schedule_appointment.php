@@ -3,17 +3,19 @@ session_start();
 require 'db_connect.php';
 include 'header.php';
 
-// Check if a doctor is logged in
-if (!isset($_SESSION['doctor_id'])) {
+// Check if admin or doctor is logged in
+if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php");
     exit();
 }
 
-$doctor_id = $_SESSION['doctor_id'];
 
-$stmt = $pdo->prepare("SELECT Patient.* FROM Patient JOIN DoctorPatient ON Patient.PatientID = DoctorPatient.PatientID WHERE DoctorPatient.DoctorID = :doctor_id");
-$stmt->execute(['doctor_id' => $doctor_id]);
+$stmt = $pdo->query("SELECT * FROM Patient ORDER BY PatientName ASC");
 $patients = $stmt->fetchAll();
+
+$doctors = [];
+    $doctorStmt = $pdo->query("SELECT DoctorID, DoctorName FROM Doctor ORDER BY DoctorName ASC");
+    $doctors = $doctorStmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -26,6 +28,7 @@ $patients = $stmt->fetchAll();
     <script>
         function toggleAppointmentType() {
             const appointmentType = document.querySelector('input[name="appointment_type"]:checked')?.value;
+            const doctorField = document.getElementById("doctor_field");
 
             // Surgery Fields
             const surgeryFields = document.getElementById("surgery_fields");
@@ -40,15 +43,43 @@ $patients = $stmt->fetchAll();
             surgeryFields.style.display = "none";
             labFields.style.display = "none";
             checkupFields.style.display = "none";
+            doctorField.style.display = "none";
 
             if (appointmentType === "surgery") {
                 surgeryFields.style.display = "block";
+                doctorField.style.display = "block";
             } else if (appointmentType === "lab") {
                 labFields.style.display = "block";
             } else if (appointmentType === "checkup") {
                 checkupFields.style.display = "block";
+                doctorField.style.display = "block";
             }
         }
+
+        document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("doctor_id").addEventListener("change", function() {
+            const doctorId = this.value;
+            const patientDropdown = document.getElementById("patient_id");
+
+            if (doctorId) {
+                fetch(`fetch_patients.php?doctor_id=${doctorId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        patientDropdown.innerHTML = '<option value="">-- Select a Patient --</option>';
+                        
+                        data.forEach(patient => {
+                            const option = document.createElement("option");
+                            option.value = patient.PatientID;
+                            option.textContent = patient.PatientName;
+                            patientDropdown.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error("Error fetching patients:", error));
+            } else {
+                patientDropdown.innerHTML = '<option value="">-- Select a Patient --</option>';
+            }
+            });
+        });
     </script>
 </head>
 <body onload="toggleAppointmentType();">
@@ -64,10 +95,24 @@ $patients = $stmt->fetchAll();
                     <option value="<?php echo htmlspecialchars($patient['PatientID']); ?>">
                         <?php echo htmlspecialchars($patient['PatientName']); ?>
                     </option>
-                <?php endforeach; ?>
+                 <?php endforeach; ?>
             </select>
         </div>
         <br><br>
+
+
+            <div id="doctor_field" style="display: none;">
+                <label for="doctor_id" class="form-label">Select Doctor:</label>
+                <select id="doctor_id" name="doctor_id" class="form-select">
+                    <option value="">-- Select a Doctor --</option>
+                    <?php foreach ($doctors as $doc): ?>
+                        <option value="<?php echo htmlspecialchars($doc['DoctorID']); ?>">
+                            <?php echo htmlspecialchars($doc['DoctorName']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <br><br>
+            </div>
 
             <label class="form-label">Appointment Type:</label><br>
             <input type="radio" id="surgery" name="appointment_type" value="surgery" onclick="toggleAppointmentType()">
@@ -109,9 +154,6 @@ $patients = $stmt->fetchAll();
                 <input type="text" id="checkup_reason" name="checkup_reason" class="form-input">
                 <br><br>
             </div>
-
-            <!-- Hidden field to pass the logged-in doctor ID -->
-            <input type="hidden" name="doctor_id" value="<?php echo htmlspecialchars($doctor_id); ?>">
 
             <input type="submit" value="Schedule Appointment" class="button">
         </form>

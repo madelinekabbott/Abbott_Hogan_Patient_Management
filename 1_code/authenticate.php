@@ -2,24 +2,41 @@
 session_start();
 require 'db_connect.php';
 
-$loginError = false;
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $doctor_id = $_POST['doctor_id'];
+    $username = $_POST['username'];  
     $password = $_POST['password'];
+    $role = $_POST['role'];        
 
-    // Check if credentials match any doctor in the database
-    $stmt = $pdo->prepare("SELECT * FROM Doctor WHERE DoctorID = :doctor_id AND password = :password");
-    $stmt->execute(['doctor_id' => $doctor_id, 'password' => $password]);
-    $doctor = $stmt->fetch();
-
-    if ($doctor) {
-        $_SESSION['doctor_id'] = $doctor['DoctorID'];
-        $_SESSION['doctor_name'] = $doctor['DoctorName'];
-        header("Location: dashboard.php");  // Redirect to the dashboard on success
-        exit();
+    if ($role === 'doctor') {
+        $stmt = $pdo->prepare("SELECT * FROM Doctor WHERE DoctorID = :username AND password = :password");
+    } elseif ($role === 'admin') {
+        $stmt = $pdo->prepare("SELECT * FROM Admin WHERE AdminID = :username AND password = :password");
     } else {
         header("Location: login.php?error=1");
+        exit();
+    }
+
+    $stmt->execute(['username' => $username, 'password' => $password]);
+    $user = $stmt->fetch();
+
+    if ($user) {
+        if ($role === 'doctor') {
+            $_SESSION['doctor_id'] = $user['DoctorID'];
+            $_SESSION['doctor_name'] = $user['DoctorName'];
+            header("Location: doctor_dashboard.php");  
+        } elseif ($role === 'admin') {
+            $_SESSION['admin_id'] = $user['AdminID'];
+            $_SESSION['admin_name'] = $user['AdminName'];
+            header("Location: admin_dashboard.php"); 
+        }
+        exit();
+    } else {
+        if ($role === 'doctor') {
+            header("Location: login.php?error=doctor");
+        } elseif ($role === 'admin') {
+            header("Location: login.php?error=admin");
+        }
+        exit();
     }
 }
 ?>

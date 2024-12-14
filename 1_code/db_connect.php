@@ -1,8 +1,8 @@
 <?php
 $host = 'localhost'; 
 $db = 'patient_management';  
-$user = "your_database_username";
-$pass = "your_database_password"; 
+$user = 'SystemDesignUser';  
+$pass = 'aws012kL33kn';  
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);

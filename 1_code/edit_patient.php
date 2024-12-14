@@ -3,12 +3,14 @@ session_start();
 require 'db_connect.php';
 include 'header.php';
 
-if (!isset($_SESSION['doctor_id'])) {
+$isAdmin = isset($_SESSION['admin_id']);
+$isDoctor = isset($_SESSION['doctor_id']);
+
+if (!$isAdmin && !$isDoctor) {
     header("Location: login.php");
     exit();
 }
 
-$doctor_id = $_SESSION['doctor_id'];
 $patient_id = $_GET['patient_id'] ?? null;
 
 if (!$patient_id) {
@@ -16,7 +18,39 @@ if (!$patient_id) {
     exit();
 }
 
-// Fetch patient details
+if ($isDoctor) {
+    $doctor_id = $_SESSION['doctor_id'];
+
+    $stmt = $pdo->prepare("
+        SELECT 
+            PatientName, DOB, Address, City, 
+            ContactNumber, PatientInformation, 
+            Prescriptions, Diagnoses, PreferredPharmacy
+        FROM 
+            Patient
+        JOIN 
+            DoctorPatient ON Patient.PatientID = DoctorPatient.PatientID
+        WHERE 
+            Patient.PatientID = :patient_id 
+            AND DoctorPatient.DoctorID = :doctor_id
+    ");
+    $stmt->execute(['patient_id' => $patient_id, 'doctor_id' => $doctor_id]);
+    $patient = $stmt->fetch();
+
+} else {
+    $stmt = $pdo->prepare("
+        SELECT 
+            PatientName, DOB, Address, City, 
+            ContactNumber, PatientInformation, 
+            Prescriptions, Diagnoses, PreferredPharmacy
+        FROM 
+            Patient
+        WHERE Patient.PatientID = :patient_id
+    ");
+    $stmt->execute(['patient_id' => $patient_id]);
+    $patient = $stmt->fetch();
+}
+
 $stmt = $pdo->prepare("
     SELECT 
         PatientName, DOB, Address, City, 
@@ -38,7 +72,6 @@ if (!$patient) {
     exit();
 }
 
-// Update patient information on form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $patientName = $_POST['patient_name'];
     $dob = $_POST['dob'];
