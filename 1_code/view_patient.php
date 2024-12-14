@@ -14,6 +14,7 @@ if (!$isAdmin && !$isDoctor) {
 }
 
 $patient_id = $_GET['patient_id'] ?? null;
+$viewUrl = $isAdmin ? "manage_patients.php" : "view_records.php";
 
 if (!$patient_id) {
     echo "No patient specified.";
@@ -82,7 +83,7 @@ if (!$patient) {
 
         <a href="edit_patient.php?patient_id=<?php echo $patient_id; ?>" class="button">Edit Patient Information</a>
         <br>
-        <a href="view_records.php" class="button">Back to Patient List</a>
+        <a href="<?php echo $viewUrl; ?>" class="button">Back to Patient List</a>
     </div>
 </body>
 </html>

@@ -14,7 +14,7 @@ if (!$isAdmin && !$isDoctor) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $patient_id = $_POST['patient_id'];
     $appointment_type = $_POST['appointment_type'];
-    $doctor_id = isset($_SESSION['doctor_id']) ? $_SESSION['doctor_id'] : null;
+    $doctor_id = $isDoctor ? $_SESSION['doctor_id'] : ($_POST['doctor_id'] ?? null); 
     $current_time = date('Y-m-d H:i:s'); 
 
     try {

@@ -3,7 +3,6 @@ session_start();
 require 'db_connect.php';
 include 'header.php';
 
-// Check if admin or doctor is logged in
 if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php");
     exit();

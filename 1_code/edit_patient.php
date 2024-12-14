@@ -18,57 +18,45 @@ if (!$patient_id) {
     exit();
 }
 
-if ($isDoctor) {
-    $doctor_id = $_SESSION['doctor_id'];
+try {
+    if ($isDoctor) {
+        $doctor_id = $_SESSION['doctor_id'];
+        $stmt = $pdo->prepare("
+            SELECT 
+                PatientName, DOB, Address, City, 
+                ContactNumber, PatientInformation, 
+                Prescriptions, Diagnoses, PreferredPharmacy
+            FROM 
+                Patient
+            JOIN 
+                DoctorPatient ON Patient.PatientID = DoctorPatient.PatientID
+            WHERE 
+                Patient.PatientID = :patient_id 
+                AND DoctorPatient.DoctorID = :doctor_id
+        ");
+        $stmt->execute(['patient_id' => $patient_id, 'doctor_id' => $doctor_id]);
+    } else {
+        $stmt = $pdo->prepare("
+            SELECT 
+                PatientName, DOB, Address, City, 
+                ContactNumber, PatientInformation, 
+                Prescriptions, Diagnoses, PreferredPharmacy
+            FROM 
+                Patient
+            WHERE 
+                Patient.PatientID = :patient_id
+        ");
+        $stmt->execute(['patient_id' => $patient_id]);
+    }
 
-    $stmt = $pdo->prepare("
-        SELECT 
-            PatientName, DOB, Address, City, 
-            ContactNumber, PatientInformation, 
-            Prescriptions, Diagnoses, PreferredPharmacy
-        FROM 
-            Patient
-        JOIN 
-            DoctorPatient ON Patient.PatientID = DoctorPatient.PatientID
-        WHERE 
-            Patient.PatientID = :patient_id 
-            AND DoctorPatient.DoctorID = :doctor_id
-    ");
-    $stmt->execute(['patient_id' => $patient_id, 'doctor_id' => $doctor_id]);
     $patient = $stmt->fetch();
 
-} else {
-    $stmt = $pdo->prepare("
-        SELECT 
-            PatientName, DOB, Address, City, 
-            ContactNumber, PatientInformation, 
-            Prescriptions, Diagnoses, PreferredPharmacy
-        FROM 
-            Patient
-        WHERE Patient.PatientID = :patient_id
-    ");
-    $stmt->execute(['patient_id' => $patient_id]);
-    $patient = $stmt->fetch();
-}
-
-$stmt = $pdo->prepare("
-    SELECT 
-        PatientName, DOB, Address, City, 
-        ContactNumber, PatientInformation, 
-        Prescriptions, Diagnoses, PreferredPharmacy
-    FROM 
-        Patient
-    JOIN 
-        DoctorPatient ON Patient.PatientID = DoctorPatient.PatientID
-    WHERE 
-        Patient.PatientID = :patient_id 
-        AND DoctorPatient.DoctorID = :doctor_id
-");
-$stmt->execute(['patient_id' => $patient_id, 'doctor_id' => $doctor_id]);
-$patient = $stmt->fetch();
-
-if (!$patient) {
-    echo "Patient record not found or access is restricted.";
+    if (!$patient) {
+        echo "Patient record not found or access is restricted.";
+        exit();
+    }
+} catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
     exit();
 }
 
@@ -83,30 +71,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $diagnoses = $_POST['diagnoses'];
     $preferredPharmacy = $_POST['preferred_pharmacy'];
 
-    $updateStmt = $pdo->prepare("
-        UPDATE Patient 
-        SET PatientName = :patient_name, DOB = :dob, Address = :address, 
-            City = :city, ContactNumber = :contact_number, 
-            PatientInformation = :patient_information, Prescriptions = :prescriptions, 
-            Diagnoses = :diagnoses, PreferredPharmacy = :preferred_pharmacy 
-        WHERE PatientID = :patient_id
-    ");
-    
-    $updateStmt->execute([
-        'patient_name' => $patientName,
-        'dob' => $dob,
-        'address' => $address,
-        'city' => $city,
-        'contact_number' => $contactNumber,
-        'patient_information' => $patientInformation,
-        'prescriptions' => $prescriptions,
-        'diagnoses' => $diagnoses,
-        'preferred_pharmacy' => $preferredPharmacy,
-        'patient_id' => $patient_id
-    ]);
+    try {
+        $updateStmt = $pdo->prepare("
+            UPDATE Patient 
+            SET PatientName = :patient_name, DOB = :dob, Address = :address, 
+                City = :city, ContactNumber = :contact_number, 
+                PatientInformation = :patient_information, Prescriptions = :prescriptions, 
+                Diagnoses = :diagnoses, PreferredPharmacy = :preferred_pharmacy 
+            WHERE PatientID = :patient_id
+        ");
+        
+        $updateStmt->execute([
+            'patient_name' => $patientName,
+            'dob' => $dob,
+            'address' => $address,
+            'city' => $city,
+            'contact_number' => $contactNumber,
+            'patient_information' => $patientInformation,
+            'prescriptions' => $prescriptions,
+            'diagnoses' => $diagnoses,
+            'preferred_pharmacy' => $preferredPharmacy,
+            'patient_id' => $patient_id
+        ]);
 
-    header("Location: view_patient.php?patient_id=" . $patient_id . "&updated=true");
-    exit();
+        header("Location: view_patient.php?patient_id=" . $patient_id . "&updated=true");
+        exit();
+    } catch (PDOException $e) {
+        echo "Database Error: " . $e->getMessage();
+    }
 }
 ?>
 
