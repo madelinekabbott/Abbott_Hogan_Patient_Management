@@ -1,0 +1,26 @@
+Install PHP Globally on your pc
+
+Then created and intiated a new project through composer
+
+Entered these lines in to the composer
+$ mkdir test-project
+$ cd test-project
+$ composer init
+
+Follow the init prompt and fill out details as needed
+
+We then take the test classes enterting this code into your classes
+
+<?php
+
+namespace Zubair\TestProject;
+
+use PHPUnit\Framework\TestCase;
+
+final class UserTest extends TestCase
+{
+    // Tests will go here
+}
+
+Then we ran each class seperatly through the composer to test them using this line
+$ ./vendor/bin/phpunit --verbose tests/UserTest.php
