@@ -11,8 +11,8 @@ if (!isset($_SESSION['admin_id'])) {
 $errorMessage = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $doctorID    = $_POST['doctor_id'];
-    $doctorName  = $_POST['doctor_name'];
+    $tutorID    = $_POST['tutor_id'];
+    $tutorName  = $_POST['tutor_name'];
     $department  = $_POST['department'];
     $password    = $_POST['password'];
     $dob         = $_POST['dob'];
@@ -22,9 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hashed_password = $password;
 
     $stmt = $pdo->prepare("
-        INSERT INTO Doctor (
-            DoctorID,
-            DoctorName,
+        INSERT INTO Tutor (
+            TutorID,
+            TutorName,
             Department,
             password,
             DOB,
@@ -32,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Email,
             PhoneNumber
         ) VALUES (
-            :doctor_id,
-            :doctor_name,
+            :tutor_id,
+            :tutor_name,
             :department,
             :password,
             :dob,
@@ -45,8 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         $stmt->execute([
-            'doctor_id'    => $doctorID,
-            'doctor_name'  => $doctorName,
+            'tutor_id'    => $doctorID,
+            'tutor_name'  => $doctorName,
             'department'   => $department,
             'password'     => $hashed_password,
             'dob'          => $dob,
@@ -55,13 +55,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'phone_number' => $phoneNumber
         ]);
 
-        header("Location: manage_doctors.php?created=true");
+        header("Location: manage_tutors.php?created=true");
         exit();
     } catch (PDOException $e) {
         if ($e->getCode() == 23000) {
-            $errorMessage = "That DoctorID is already in use.";
+            $errorMessage = "That TutorID is already in use.";
         } else {
-            $errorMessage = "Error creating doctor: " . $e->getMessage();
+            $errorMessage = "Error creating tutor: " . $e->getMessage();
         }
     }
 }
@@ -72,8 +72,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create New Doctor</title>
-    <link rel="stylesheet" href="patient_management_style.css">
+    <title>Create New Tutor</title>
+    <link rel="stylesheet" href="student_management_style.css">
 </head>
 <body>
     <?php if (!empty($errorMessage)): ?>
@@ -81,16 +81,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <div class="container">
-        <h2 class="header">Create New Doctor</h2>
+        <h2 class="header">Create New Tutor</h2>
         <form action="" method="POST">
             <table class="form-table">
                 <tr>
-                    <td><label for="doctor_id">Doctor ID:</label></td>
-                    <td><input type="text" name="doctor_id" id="doctor_id" style="width: 200px;" required></td>
+                    <td><label for="tutor_id">Tutor ID:</label></td>
+                    <td><input type="text" name="tutor_id" id="tutor_id" style="width: 200px;" required></td>
                 </tr>
                 <tr>
-                    <td><label for="doctor_name">Doctor Name:</label></td>
-                    <td><input type="text" name="doctor_name" id="doctor_name" style="width: 200px;" required></td>
+                    <td><label for="tutor_name">Tutor Name:</label></td>
+                    <td><input type="text" name="tutor_name" id="tutor_name" style="width: 200px;" required></td>
                 </tr>
                 <tr>
                     <td><label for="department">Department:</label></td>
@@ -118,8 +118,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </tr>
                 <tr>
                     <td colspan="2" style="text-align:center;">
-                        <button type="submit" class="button">Create Doctor</button>
-                        <a href="manage_doctors.php" class="button">Cancel</a>
+                        <button type="submit" class="button">Create Tutor</button>
+                        <a href="manage_tutors.php" class="button">Cancel</a>
                     </td>
                 </tr>
             </table>
