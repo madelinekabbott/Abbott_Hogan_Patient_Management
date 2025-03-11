@@ -11,30 +11,30 @@ if (!$isAdmin && !$isDoctor) {
 require 'db_connect.php';
 
 $type = $_GET['type'];
-$patient_id = $_GET['patient_id'];
+$patient_id = $_GET['student_id'];
 $time = $_GET['time'];
 
-$doctor_id = $isDoctor ? $_SESSION['doctor_id'] : null;
+$doctor_id = $isDoctor ? $_SESSION['tutor_id'] : null;
 
 switch ($type) {
     case 'surgery':
         $stmt = $pdo->prepare(
-            $isDoctor ? "DELETE FROM Surgery WHERE PatientID = :patient_id AND SurgeryTime = :time AND DoctorID = :doctor_id" :
-                        "DELETE FROM Surgery WHERE PatientID = :patient_id AND SurgeryTime = :time"
+            $isDoctor ? "DELETE FROM Surgery WHERE StudentID = :student_id AND SurgeryTime = :time AND TutorID = :tutor_id" :
+                        "DELETE FROM Surgery WHERE StudentID = :student_id AND SurgeryTime = :time"
         );
         break;
     case 'lab':
         $stmt = $pdo->prepare(
-            $isDoctor ? "DELETE FROM Labs WHERE PatientID = :patient_id AND LabTime = :time AND EXISTS (
-                            SELECT 1 FROM DoctorPatient WHERE DoctorID = :doctor_id AND PatientID = :patient_id
+            $isDoctor ? "DELETE FROM Labs WHERE StudentID = :student_id AND LabTime = :time AND EXISTS (
+                            SELECT 1 FROM DoctorPatient WHERE TutorID = :tutor_id AND StudentID = :student_id
                         )" :
-                        "DELETE FROM Labs WHERE PatientID = :patient_id AND LabTime = :time"
+                        "DELETE FROM Labs WHERE StudentID = :student_id AND LabTime = :time"
         );
         break;
     case 'checkup':
         $stmt = $pdo->prepare(
-            $isDoctor ? "DELETE FROM CheckUp WHERE PatientID = :patient_id AND CheckTime = :time AND DoctorID = :doctor_id" :
-                        "DELETE FROM CheckUp WHERE PatientID = :patient_id AND CheckTime = :time"
+            $isDoctor ? "DELETE FROM CheckUp WHERE StudentID = :student_id AND CheckTime = :time AND TutorID = :tutor_id" :
+                        "DELETE FROM CheckUp WHERE StudentID = :student_id AND CheckTime = :time"
         );
         break;
     default:
@@ -43,11 +43,11 @@ switch ($type) {
 }
 
 $params = [
-    ':patient_id' => $patient_id,
+    ':patient_id' => $student_id,
     ':time' => $time
 ];
-if ($isDoctor) {
-    $params[':doctor_id'] = $doctor_id;
+if ($isTutor) {
+    $params[':tutor_id'] = $tutor_id;
 }
 $stmt->execute($params);
 
