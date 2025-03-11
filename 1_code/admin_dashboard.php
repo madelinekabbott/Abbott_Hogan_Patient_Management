@@ -8,9 +8,9 @@ if (!isset($_SESSION['admin_id'])) {
 require 'db_connect.php';
 include 'header.php';
 
-$stmt = $pdo->prepare("SELECT * FROM Patient");
+$stmt = $pdo->prepare("SELECT * FROM Student");
 $stmt->execute();
-$patients = $stmt->fetchAll();
+$student = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -19,30 +19,30 @@ $patients = $stmt->fetchAll();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="patient_management_style.css">
+    <link rel="stylesheet" href="student_management_style.css">
 </head>
 <body>
     <div class="container">
         <h2>Welcome, Admin <?php echo htmlspecialchars($_SESSION['admin_name']); ?>!</h2>
         <p class="text">Select an option below:</p>
         <ul class="options">
-            <li><a href="manage_doctors.php">Manage Doctors</a></li>
-            <li><a href="manage_patients.php">Manage Patients</a></li>
+            <li><a href="manage_tutors.php">Manage Doctors</a></li>
+            <li><a href="manage_students.php">Manage Patients</a></li>
             <li><a href="view_appointments.php">View All Appointments</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
 
-        <h3>All Patients:</h3>
-        <ul class="patients">
-            <?php if ($patients): ?>
-                <?php foreach ($patients as $patient): ?>
+        <h3>All Students:</h3>
+        <ul class="students">
+            <?php if ($students): ?>
+                <?php foreach ($students as $student): ?>
                     <li>
-                        <?php echo htmlspecialchars($patient['PatientName']); ?> - 
+                        <?php echo htmlspecialchars($patient['StudentName']); ?> - 
                         <?php echo htmlspecialchars($patient['ContactNumber']); ?>
                     </li>
                 <?php endforeach; ?>
             <?php else: ?>
-                <li>No patients found.</li>
+                <li>No students found.</li>
             <?php endif; ?>
         </ul>
     </div>
