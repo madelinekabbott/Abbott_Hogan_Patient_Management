@@ -7,8 +7,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
     $role = $_POST['role'];        
 
-    if ($role === 'doctor') {
-        $stmt = $pdo->prepare("SELECT * FROM Doctor WHERE DoctorID = :username AND password = :password");
+    if ($role === 'tutor') {
+        $stmt = $pdo->prepare("SELECT * FROM Tutor WHERE TutorID = :username AND password = :password");
     } elseif ($role === 'admin') {
         $stmt = $pdo->prepare("SELECT * FROM Admin WHERE AdminID = :username AND password = :password");
     } else {
@@ -20,9 +20,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = $stmt->fetch();
 
     if ($user) {
-        if ($role === 'doctor') {
-            $_SESSION['doctor_id'] = $user['DoctorID'];
-            $_SESSION['doctor_name'] = $user['DoctorName'];
+        if ($role === 'tutor') {
+            $_SESSION['tutor_id'] = $user['DoctorID'];
+            $_SESSION['tutor_name'] = $user['DoctorName'];
             header("Location: doctor_dashboard.php");  
         } elseif ($role === 'admin') {
             $_SESSION['admin_id'] = $user['AdminID'];
@@ -31,8 +31,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         exit();
     } else {
-        if ($role === 'doctor') {
-            header("Location: login.php?error=doctor");
+        if ($role === 'tutor') {
+            header("Location: login.php?error=tutor");
         } elseif ($role === 'admin') {
             header("Location: login.php?error=admin");
         }
