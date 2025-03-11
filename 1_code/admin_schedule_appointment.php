@@ -9,12 +9,12 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 
-$stmt = $pdo->query("SELECT * FROM Patient ORDER BY PatientName ASC");
-$patients = $stmt->fetchAll();
+$stmt = $pdo->query("SELECT * FROM Student ORDER BY StudentName ASC");
+$students = $stmt->fetchAll();
 
-$doctors = [];
-    $doctorStmt = $pdo->query("SELECT DoctorID, DoctorName FROM Doctor ORDER BY DoctorName ASC");
-    $doctors = $doctorStmt->fetchAll();
+$Tutors = [];
+    $tutorStmt = $pdo->query("SELECT TutorID, TutorName FROM Tutor ORDER BY TutorName ASC");
+    $tutors = $tutorStmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -23,7 +23,7 @@ $doctors = [];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Schedule Appointment</title>
-    <link rel="stylesheet" href="patient_management_style.css">
+    <link rel="stylesheet" href="student_management_style.css">
     <script>
         function toggleAppointmentType() {
             const appointmentType = document.querySelector('input[name="appointment_type"]:checked')?.value;
@@ -42,40 +42,40 @@ $doctors = [];
             surgeryFields.style.display = "none";
             labFields.style.display = "none";
             checkupFields.style.display = "none";
-            doctorField.style.display = "none";
+            tutorField.style.display = "none";
 
             if (appointmentType === "surgery") {
                 surgeryFields.style.display = "block";
-                doctorField.style.display = "block";
+                tutorField.style.display = "block";
             } else if (appointmentType === "lab") {
                 labFields.style.display = "block";
             } else if (appointmentType === "checkup") {
                 checkupFields.style.display = "block";
-                doctorField.style.display = "block";
+                tutorField.style.display = "block";
             }
         }
 
         document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("doctor_id").addEventListener("change", function() {
-            const doctorId = this.value;
-            const patientDropdown = document.getElementById("patient_id");
+            const tutorId = this.value;
+            const studentDropdown = document.getElementById("patient_id");
 
-            if (doctorId) {
-                fetch(`fetch_patients.php?doctor_id=${doctorId}`)
+            if (studentId) {
+                fetch(`fetch_students.php?doctor_id=${studentId}`)
                     .then(response => response.json())
                     .then(data => {
-                        patientDropdown.innerHTML = '<option value="">-- Select a Patient --</option>';
+                        studentDropdown.innerHTML = '<option value="">-- Select a Student --</option>';
                         
-                        data.forEach(patient => {
+                        data.forEach(student => {
                             const option = document.createElement("option");
-                            option.value = patient.PatientID;
-                            option.textContent = patient.PatientName;
-                            patientDropdown.appendChild(option);
+                            option.value = student.StudentID;
+                            option.textContent = student.StudentName;
+                            studentDropdown.appendChild(option);
                         });
                     })
-                    .catch(error => console.error("Error fetching patients:", error));
+                    .catch(error => console.error("Error fetching students:", error));
             } else {
-                patientDropdown.innerHTML = '<option value="">-- Select a Patient --</option>';
+                studentDropdown.innerHTML = '<option value="">-- Select a Student --</option>';
             }
             });
         });
@@ -86,13 +86,13 @@ $doctors = [];
         <h2>Schedule an Appointment</h2>
         <form action="submit_appointment.php" method="POST" class="form">
 
-        <div id="patient_field">
-            <label for="patient_id" class="form-label">Select Patient:</label>
-            <select id="patient_id" name="patient_id" required class="form-select">
-                <option value="">-- Select a Patient --</option>
-                <?php foreach ($patients as $patient): ?>
-                    <option value="<?php echo htmlspecialchars($patient['PatientID']); ?>">
-                        <?php echo htmlspecialchars($patient['PatientName']); ?>
+        <div id="student_field">
+            <label for="student_id" class="form-label">Select Student:</label>
+            <select id="student_id" name="student_id" required class="form-select">
+                <option value="">-- Select a Student --</option>
+                <?php foreach ($students as $student): ?>
+                    <option value="<?php echo htmlspecialchars($student['StudentID']); ?>">
+                        <?php echo htmlspecialchars($student['StudentName']); ?>
                     </option>
                  <?php endforeach; ?>
             </select>
@@ -100,13 +100,13 @@ $doctors = [];
         <br><br>
 
 
-            <div id="doctor_field" style="display: none;">
-                <label for="doctor_id" class="form-label">Select Doctor:</label>
-                <select id="doctor_id" name="doctor_id" class="form-select">
-                    <option value="">-- Select a Doctor --</option>
-                    <?php foreach ($doctors as $doc): ?>
-                        <option value="<?php echo htmlspecialchars($doc['DoctorID']); ?>">
-                            <?php echo htmlspecialchars($doc['DoctorName']); ?>
+            <div id="tutor_field" style="display: none;">
+                <label for="tutor_id" class="form-label">Select Tutor:</label>
+                <select id="tutor_id" name="tutor_id" class="form-select">
+                    <option value="">-- Select a Tutor --</option>
+                    <?php foreach ($tutors as $tutor): ?>
+                        <option value="<?php echo htmlspecialchars($tutor['TutorID']); ?>">
+                            <?php echo htmlspecialchars($doc['TutorName']); ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
