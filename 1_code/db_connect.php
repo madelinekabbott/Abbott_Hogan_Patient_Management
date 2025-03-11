@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost'; 
-$db = 'patient_management';  
+$db = 'student_management';  
 $user = 'SystemDesignUser';  
 $pass = 'aws012kL33kn';  
 
