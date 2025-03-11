@@ -11,8 +11,8 @@ if (!isset($_SESSION['admin_id'])) {
 $errorMessage = ""; 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $patientId          = $_POST['patient_id'];
-    $patientName        = $_POST['patient_name'];
+    $studentId          = $_POST['patient_id'];
+    $studentName        = $_POST['patient_name'];
     $address            = $_POST['address'];
     $city               = $_POST['city'];
     $contactNumber      = $_POST['contact_number'];
@@ -24,8 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stmt = $pdo->prepare("
         INSERT INTO Patient (
-            PatientID, 
-            PatientName, 
+            StudentID, 
+            StudentName, 
             Address, 
             City, 
             ContactNumber, 
@@ -35,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Diagnoses, 
             PreferredPharmacy
         ) VALUES (
-            :patient_id, 
-            :patient_name, 
+            :student_id, 
+            :student_name, 
             :address, 
             :city, 
             :contact_number, 
@@ -50,8 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         $stmt->execute([
-            'patient_id'           => $patientId,
-            'patient_name'         => $patientName,
+            'student_id'           => $studentId,
+            'student_name'         => $studentName,
             'address'              => $address,
             'city'                 => $city,
             'contact_number'       => $contactNumber,
@@ -62,13 +62,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'preferred_pharmacy'   => $preferredPharmacy
         ]);
 
-        header("Location: manage_patients.php?created=true");
+        header("Location: manage_students.php?created=true");
         exit();
     } catch (PDOException $e) {
         if ($e->getCode() == 23000) {
-            $errorMessage = "That PatientID is already in use.";
+            $errorMessage = "That StudentID is already in use.";
         } else {
-            $errorMessage = "Error inserting patient: " . $e->getMessage();
+            $errorMessage = "Error inserting student: " . $e->getMessage();
         }
     }
 }
@@ -79,8 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create New Patient</title>
-    <link rel="stylesheet" href="patient_management_style.css">
+    <title>Create New Student</title>
+    <link rel="stylesheet" href="student_management_style.css">
 </head>
 <body>
     <?php if (!empty($errorMessage)): ?>
@@ -88,18 +88,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <div class="container">
-        <h2 class="header">Create New Patient</h2>
+        <h2 class="header">Create New Student</h2>
         <form action="" method="POST">
             <table class="form-table">
-                <!-- Patient ID -->
+                <!-- Student ID -->
                 <tr>
-                    <td><label for="patient_id">Patient ID:</label></td>
-                    <td><input type="text" name="patient_id" id="patient_id" style="width: 200px;" required></td>
+                    <td><label for="student_id">Student ID:</label></td>
+                    <td><input type="text" name="student_id" id="student_id" style="width: 200px;" required></td>
                 </tr>
-                <!-- Patient Name -->
+                <!-- Student Name -->
                 <tr>
-                    <td><label for="patient_name">Patient Name:</label></td>
-                    <td><input type="text" name="patient_name" id="patient_name" style="width: 200px;" required></td>
+                    <td><label for="student_name">Student Name:</label></td>
+                    <td><input type="text" name="student_name" id="student_name" style="width: 200px;" required></td>
                 </tr>
                 <!-- Address -->
                 <tr>
