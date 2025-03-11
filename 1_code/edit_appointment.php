@@ -1,9 +1,9 @@
 <?php
 session_start();
 $isAdmin = isset($_SESSION['admin_id']);
-$isDoctor = isset($_SESSION['doctor_id']);
+$isDoctor = isset($_SESSION['Tutor_id']);
 
-if (!$isAdmin && !$isDoctor) {
+if (!$isAdmin && !$isTutor) {
     header("Location: login.php");
     exit();
 }
@@ -12,10 +12,10 @@ require 'db_connect.php';
 include 'header.php';
 
 $type = $_GET['type'];
-$patient_id = $_GET['patient_id'];
+$student_id = $_GET['student_id'];
 $time = $_GET['time'];
 
-$doctor_id = $isDoctor ? $_SESSION['doctor_id'] : null;
+$doctor_id = $isTutor ? $_SESSION['tutor_id'] : null;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $new_time = $_POST['time'];
@@ -25,19 +25,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     switch ($type) {
         case 'surgery':
             $stmt = $pdo->prepare(
-                $isDoctor ? "UPDATE Surgery SET SurgeryTime = :new_time, SurgeryType = :new_details WHERE PatientID = :patient_id AND SurgeryTime = :time AND DoctorID = :doctor_id" :
-                            "UPDATE Surgery SET SurgeryTime = :new_time, SurgeryType = :new_details WHERE PatientID = :patient_id AND SurgeryTime = :time"
+                $isTutor ? "UPDATE Surgery SET SurgeryTime = :new_time, SurgeryType = :new_details WHERE StudentID = :student_id AND SurgeryTime = :time AND TutorID = :tutor_id" :
+                            "UPDATE Surgery SET SurgeryTime = :new_time, SurgeryType = :new_details WHERE StudentID = :student_id AND SurgeryTime = :time"
             );
             break;
         case 'lab':
             $stmt = $pdo->prepare(
-                $isDoctor ? "UPDATE Labs SET LabTime = :new_time, LabType = :new_details, ClinicLocation = :new_location WHERE PatientID = :patient_id AND LabTime = :time AND EXISTS (SELECT 1 FROM DoctorPatient WHERE DoctorID = :doctor_id AND PatientID = :patient_id)" :
-                            "UPDATE Labs SET LabTime = :new_time, LabType = :new_details, ClinicLocation = :new_location WHERE PatientID = :patient_id AND LabTime = :time"
+                $isTutor ? "UPDATE Labs SET LabTime = :new_time, LabType = :new_details, ClinicLocation = :new_location WHERE StudentID = :patient_id AND LabTime = :time AND EXISTS (SELECT 1 FROM TutorStudent WHERE TutorID = :tutor_id AND StudentID = :student_id)" :
+                            "UPDATE Labs SET LabTime = :new_time, LabType = :new_details, ClinicLocation = :new_location WHERE StudentID = :patient_id AND LabTime = :time"
             );
             break;
         case 'checkup':
             $stmt = $pdo->prepare(
-                $isDoctor ? "UPDATE CheckUp SET CheckTime = :new_time, CheckReason = :new_details WHERE PatientID = :patient_id AND CheckTime = :time AND DoctorID = :doctor_id" :
+                $isTutor ? "UPDATE CheckUp SET CheckTime = :new_time, CheckReason = :new_details WHERE PatientID = :patient_id AND CheckTime = :time AND DoctorID = :doctor_id" :
                             "UPDATE CheckUp SET CheckTime = :new_time, CheckReason = :new_details WHERE PatientID = :patient_id AND CheckTime = :time"
             );
             break;
@@ -49,12 +49,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $params = [
         ':new_time' => $new_time,
         ':new_details' => $new_details,
-        ':patient_id' => $patient_id,
+        ':student_id' => $student_id,
         ':time' => $time
     ];
 
-    if ($isDoctor) {
-        $params[':doctor_id'] = $doctor_id;
+    if ($isTutor) {
+        $params[':tutor_id'] = $tutor_id;
     }
 
     if ($type === 'lab') {
@@ -70,20 +70,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 switch ($type) {
     case 'surgery':
         $stmt = $pdo->prepare(
-            $isDoctor ? "SELECT SurgeryTime AS time, SurgeryType AS details FROM Surgery WHERE PatientID = :patient_id AND SurgeryTime = :time AND DoctorID = :doctor_id" :
-                        "SELECT SurgeryTime AS time, SurgeryType AS details FROM Surgery WHERE PatientID = :patient_id AND SurgeryTime = :time"
+            $isTutor ? "SELECT SurgeryTime AS time, SurgeryType AS details FROM Surgery WHERE StudentID = :student_id AND SurgeryTime = :time AND TutorID = :tutor_id" :
+                        "SELECT SurgeryTime AS time, SurgeryType AS details FROM Surgery WHERE StudentID = :student_id AND SurgeryTime = :time"
         );
         break;
     case 'lab':
         $stmt = $pdo->prepare(
-            $isDoctor ? "SELECT LabTime AS time, LabType AS details, ClinicLocation AS location FROM Labs WHERE PatientID = :patient_id AND LabTime = :time AND EXISTS (SELECT 1 FROM DoctorPatient WHERE DoctorID = :doctor_id AND PatientID = :patient_id)" :
-                        "SELECT LabTime AS time, LabType AS details, ClinicLocation AS location FROM Labs WHERE PatientID = :patient_id AND LabTime = :time"
+            $isTutor ? "SELECT LabTime AS time, LabType AS details, ClinicLocation AS location FROM Labs WHERE StudentID = :student_id AND LabTime = :time AND EXISTS (SELECT 1 FROM TutorStudent WHERE TutorID = :tutor_id AND StudentID = :student_id)" :
+                        "SELECT LabTime AS time, LabType AS details, ClinicLocation AS location FROM Labs WHERE StudentID = :student_id AND LabTime = :time"
         );
         break;
     case 'checkup':
         $stmt = $pdo->prepare(
-            $isDoctor ? "SELECT CheckTime AS time, CheckReason AS details FROM CheckUp WHERE PatientID = :patient_id AND CheckTime = :time AND DoctorID = :doctor_id" :
-                        "SELECT CheckTime AS time, CheckReason AS details FROM CheckUp WHERE PatientID = :patient_id AND CheckTime = :time"
+            $isTutor ? "SELECT CheckTime AS time, CheckReason AS details FROM CheckUp WHERE StudentID = :student_id AND CheckTime = :time AND TutorID = :tutor_id" :
+                        "SELECT CheckTime AS time, CheckReason AS details FROM CheckUp WHERE StudentID = :student_id AND CheckTime = :time"
         );
         break;
     default:
@@ -92,12 +92,12 @@ switch ($type) {
 }
 
 $params = [
-    ':patient_id' => $patient_id,
+    ':student_id' => $student_id,
     ':time' => $time
 ];
 
-if ($isDoctor) {
-    $params[':doctor_id'] = $doctor_id;
+if ($isTutor) {
+    $params[':tutor_id'] = $tutor_id;
 }
 
 $stmt->execute($params);
@@ -114,7 +114,7 @@ if (!$appointment) {
 <head>
     <meta charset="UTF-8">
     <title>Edit Appointment</title>
-    <link rel="stylesheet" href="patient_management_style.css"> 
+    <link rel="stylesheet" href="student_management_style.css"> 
 </head>
 <body>
     <div class="container">
