@@ -8,45 +8,45 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
-$doctor_id = $_GET['doctor_id'] ?? null;
+$tutor_id = $_GET['tutor_id'] ?? null;
 
-if (!$doctor_id) {
-    echo "No doctor specified.";
+if (!$tutor_id) {
+    echo "No tutor specified.";
     exit();
 }
 
-$stmt = $pdo->prepare("SELECT DoctorName FROM Doctor WHERE DoctorID = :doctor_id");
-$stmt->execute(['doctor_id' => $doctor_id]);
-$doctor = $stmt->fetch(PDO::FETCH_ASSOC);
+$stmt = $pdo->prepare("SELECT TutorName FROM Tutor WHERE TutorID = :tutor_id");
+$stmt->execute(['tutor_id' => $tutor_id]);
+$tutor = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if (!$doctor) {
-    echo "No doctor found with the specified ID.";
+if (!$tutor) {
+    echo "No tutor found with the specified ID.";
     exit();
 }
 
-$allPatientsStmt = $pdo->query("SELECT PatientID, PatientName FROM Patient ORDER BY PatientName ASC");
-$all_patients = $allPatientsStmt->fetchAll(PDO::FETCH_ASSOC);
+$allStudentsStmt = $pdo->query("SELECT StudentID, StudentName FROM Student ORDER BY StudentName ASC");
+$all_patients = $allStudentsStmt->fetchAll(PDO::FETCH_ASSOC);
 
-$assignedPatientsStmt = $pdo->prepare("
-    SELECT PatientID 
-    FROM DoctorPatient 
-    WHERE DoctorID = :doctor_id
+$assignedStudentsStmt = $pdo->prepare("
+    SELECT StudentID 
+    FROM TutorStudent 
+    WHERE TutorID = :tutor_id
 ");
-$assignedPatientsStmt->execute(['doctor_id' => $doctor_id]);
-$assigned_patients = $assignedPatientsStmt->fetchAll(PDO::FETCH_COLUMN, 0);
+$assignedStudentsStmt->execute(['tutor_id' => $tutor_id]);
+$assigned_students = $assignedStudentsStmt->fetchAll(PDO::FETCH_COLUMN, 0);
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $selected_patients = $_POST['patients'] ?? [];
+    $selected_students = $_POST['students'] ?? [];
 
-    $deleteStmt = $pdo->prepare("DELETE FROM DoctorPatient WHERE DoctorID = :doctor_id");
-    $deleteStmt->execute(['doctor_id' => $doctor_id]);
+    $deleteStmt = $pdo->prepare("DELETE FROM TutorStudent WHERE TutorID = :tutor_id");
+    $deleteStmt->execute(['tutor_id' => $tutor_id]);
 
-    $insertStmt = $pdo->prepare("INSERT INTO DoctorPatient (DoctorID, PatientID) VALUES (:doctor_id, :patient_id)");
-    foreach ($selected_patients as $patient_id) {
-        $insertStmt->execute(['doctor_id' => $doctor_id, 'patient_id' => $patient_id]);
+    $insertStmt = $pdo->prepare("INSERT INTO TutorStudent (TutorID, StudentID) VALUES (:tutor_id, :student_id)");
+    foreach ($selected_students as $student_id) {
+        $insertStmt->execute(['tutor_id' => $tutor_id, 'student_id' => $student_id]);
     }
 
-    header("Location: manage_doctor_patients.php?doctor_id=".$doctor_id."&updated=true");
+    header("Location: manage_tutor_students.php?tutor_id=".$tutor_id."&updated=true");
     exit();
 }
 
@@ -58,35 +58,35 @@ $updated = isset($_GET['updated']) && $_GET['updated'] === 'true';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Patients for Dr. <?php echo htmlspecialchars($doctor['DoctorName']); ?></title>
-    <link rel="stylesheet" href="patient_management_style.css">
+    <title>Manage Patients for Dr. <?php echo htmlspecialchars($tutor['TutorName']); ?></title>
+    <link rel="stylesheet" href="student_management_style.css">
 </head>
 <body>
     <div class="container">
-        <h2>Manage Patients for Dr. <?php echo htmlspecialchars($doctor['DoctorName']); ?></h2>
+        <h2>Manage Students for Tutor <?php echo htmlspecialchars($tutor['TutorName']); ?></h2>
         <?php if ($updated): ?>
-            <p class="success">Patient assignments have been successfully updated!</p>
+            <p class="success">Student assignments have been successfully updated!</p>
         <?php endif; ?>
         
         <form method="POST" action="">
-            <p>Select the patients you want to assign to Dr. <?php echo htmlspecialchars($doctor['DoctorName']); ?>:</p>
+            <p>Select the students you want to assign to a Tutor. <?php echo htmlspecialchars($tutor['TutorName']); ?>:</p>
             <div class="checkbox-container">
-                <?php foreach ($all_patients as $patient): ?>
+                <?php foreach ($all_patients as $student): ?>
                     <div>
-                        <input type="checkbox" name="patients[]" id="patient_<?php echo $patient['PatientID']; ?>" 
-                            value="<?php echo $patient['PatientID']; ?>" 
-                            <?php echo in_array($patient['PatientID'], $assigned_patients) ? 'checked' : ''; ?>>
-                        <label for="patient_<?php echo $patient['PatientID']; ?>">
-                            <?php echo htmlspecialchars($patient['PatientName']); ?>
+                        <input type="checkbox" name="students[]" id="student_<?php echo $patient['StudentID']; ?>" 
+                            value="<?php echo $student['StudentID']; ?>" 
+                            <?php echo in_array($student['StudentID'], $assigned_students) ? 'checked' : ''; ?>>
+                        <label for="student_<?php echo $student['StudentID']; ?>">
+                            <?php echo htmlspecialchars($student['StudentName']); ?>
                         </label>
                     </div>
                 <?php endforeach; ?>
             </div>
             <br>
-            <button type="submit" class="button">Update Patient Assignments</button>
+            <button type="submit" class="button">Update Student Assignments</button>
         </form>
         <br>
-        <a href="manage_doctors.php?doctor_id=<?php echo urlencode($doctor_id); ?>" class="button">Back to Manage Doctor</a>
+        <a href="manage_tutor.php?tutor_id=<?php echo urlencode($tutor_id); ?>" class="button">Back to Manage Tutor</a>
     </div>
 </body>
 </html>
