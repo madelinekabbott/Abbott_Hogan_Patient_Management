@@ -3,17 +3,17 @@ session_start();
 require 'db_connect.php';
 include 'header.php';
 
-// Check if a doctor is logged in
-if (!isset($_SESSION['doctor_id'])) {
+// Check if a tutor is logged in
+if (!isset($_SESSION['tutor_id'])) {
     header("Location: login.php");
     exit();
 }
 
-$doctor_id = $_SESSION['doctor_id'];
+$tutor_id = $_SESSION['tutor_id'];
 
-$stmt = $pdo->prepare("SELECT Patient.* FROM Patient JOIN DoctorPatient ON Patient.PatientID = DoctorPatient.PatientID WHERE DoctorPatient.DoctorID = :doctor_id");
-$stmt->execute(['doctor_id' => $doctor_id]);
-$patients = $stmt->fetchAll();
+$stmt = $pdo->prepare("SELECT Student.* FROM Student JOIN TutorStudent ON Student.StudentID = TutorStudent.StudentID WHERE TutorStudent.TutorID = :tutor_id");
+$stmt->execute(['tutor_id' => $tutor_id]);
+$students = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -22,7 +22,7 @@ $patients = $stmt->fetchAll();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Schedule Appointment</title>
-    <link rel="stylesheet" href="patient_management_style.css">
+    <link rel="stylesheet" href="student_management_style.css">
     <script>
         function toggleAppointmentType() {
             const appointmentType = document.querySelector('input[name="appointment_type"]:checked')?.value;
@@ -56,13 +56,13 @@ $patients = $stmt->fetchAll();
         <h2>Schedule an Appointment</h2>
         <form action="submit_appointment.php" method="POST" class="form">
 
-        <div id="patient_field">
-            <label for="patient_id" class="form-label">Select Patient:</label>
-            <select id="patient_id" name="patient_id" required class="form-select">
-                <option value="">-- Select a Patient --</option>
-                <?php foreach ($patients as $patient): ?>
-                    <option value="<?php echo htmlspecialchars($patient['PatientID']); ?>">
-                        <?php echo htmlspecialchars($patient['PatientName']); ?>
+        <div id="student_field">
+            <label for="student_id" class="form-label">Select Student:</label>
+            <select id="student_id" name="student_id" required class="form-select">
+                <option value="">-- Select a Student --</option>
+                <?php foreach ($students as $student): ?>
+                    <option value="<?php echo htmlspecialchars($student['StudentID']); ?>">
+                        <?php echo htmlspecialchars($student['StudentName']); ?>
                     </option>
                 <?php endforeach; ?>
             </select>
@@ -110,8 +110,8 @@ $patients = $stmt->fetchAll();
                 <br><br>
             </div>
 
-            <!-- Hidden field to pass the logged-in doctor ID -->
-            <input type="hidden" name="doctor_id" value="<?php echo htmlspecialchars($doctor_id); ?>">
+            <!-- Hidden field to pass the logged-in tutor ID -->
+            <input type="hidden" name="tutor_id" value="<?php echo htmlspecialchars($tutor_id); ?>">
 
             <input type="submit" value="Schedule Appointment" class="button">
         </form>
