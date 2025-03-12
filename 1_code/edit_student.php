@@ -20,7 +20,7 @@ if (!$student_id) {
 
 try {
     if ($isTutor) {
-        $doctor_id = $_SESSION['tutor_id'];
+        $tutor_id = $_SESSION['tutor_id'];
         $stmt = $pdo->prepare("
             SELECT 
                 StudentName, DOB, Address, City, 
