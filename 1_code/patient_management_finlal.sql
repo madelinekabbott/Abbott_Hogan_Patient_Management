@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `patient_management`
+-- Database: `student_management`
 --
 
 -- --------------------------------------------------------
@@ -49,15 +49,15 @@ INSERT INTO `Admin` (`AdminID`, `AdminName`, `password`) VALUES
 CREATE TABLE `CheckUp` (
   `CheckTime` datetime DEFAULT NULL,
   `CheckReason` varchar(255) DEFAULT NULL,
-  `PatientID` int(11) DEFAULT NULL,
-  `DoctorID` int(11) DEFAULT NULL
+  `StudentID` int(11) DEFAULT NULL,
+  `TutorID` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `CheckUp`
 --
 
-INSERT INTO `CheckUp` (`CheckTime`, `CheckReason`, `PatientID`, `DoctorID`) VALUES
+INSERT INTO `CheckUp` (`CheckTime`, `CheckReason`, `StudentID`, `TutorID`) VALUES
 ('2024-01-01 13:00:00', 'Trouble Sleeping', 2, 2214),
 ('2025-12-18 12:00:00', 'Migraine', 1, 2214),
 ('2024-12-15 12:00:00', 'General Wellness Check', 2, 2214),
@@ -69,9 +69,9 @@ INSERT INTO `CheckUp` (`CheckTime`, `CheckReason`, `PatientID`, `DoctorID`) VALU
 -- Table structure for table `Doctor`
 --
 
-CREATE TABLE `Doctor` (
-  `DoctorID` int(11) NOT NULL,
-  `DoctorName` varchar(255) DEFAULT NULL,
+CREATE TABLE `Tutor` (
+  `TutorID` int(11) NOT NULL,
+  `TutorName` varchar(255) DEFAULT NULL,
   `Department` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `DOB` date DEFAULT NULL,
@@ -81,29 +81,29 @@ CREATE TABLE `Doctor` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `Doctor`
+-- Dumping data for table `Tutor`
 --
 
-INSERT INTO `Doctor` (`DoctorID`, `DoctorName`, `Department`, `password`, `DOB`, `Address`, `Email`, `PhoneNumber`) VALUES
-(2214, 'Allan House', 'Labs', 'securepass', '1988-12-10', '123 Elm Street, Springfield', 'ahouse@email.com', '3175550000'),
-(3211, 'Paul Bergfelder', 'Surgery', 'password123', '1972-05-09', '456 Oak Avenue, Shelbyville', 'pbergfelder@email.com', '3176125555');
+INSERT INTO `Tutor` (`TutorID`, `TutorName`, `Department`, `password`, `DOB`, `Address`, `Email`, `PhoneNumber`) VALUES
+(2214, 'Allan House', 'English', 'securepass', '1988-12-10', '123 Elm Street, Springfield', 'ahouse@email.com', '3175550000'),
+(3211, 'Paul Bergfelder', 'Math', 'password123', '1972-05-09', '456 Oak Avenue, Shelbyville', 'pbergfelder@email.com', '3176125555');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `DoctorPatient`
+-- Table structure for table `TutorStudent`
 --
 
-CREATE TABLE `DoctorPatient` (
-  `DoctorID` int(11) NOT NULL,
-  `PatientID` int(11) NOT NULL
+CREATE TABLE `TutorStudent` (
+  `TutorID` int(11) NOT NULL,
+  `StudentID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `DoctorPatient`
+-- Dumping data for table `TutorStudent`
 --
 
-INSERT INTO `DoctorPatient` (`DoctorID`, `PatientID`) VALUES
+INSERT INTO `TutorStudent` (`TutorID`, `StudentID`) VALUES
 (2214, 1),
 (2214, 2),
 (2214, 4),
@@ -121,8 +121,8 @@ CREATE TABLE `Labs` (
   `LabTime` datetime DEFAULT NULL,
   `LabType` varchar(255) DEFAULT NULL,
   `LabResult` varchar(255) DEFAULT NULL,
-  `PatientID` int(11) DEFAULT NULL,
-  `ClinicLocation` varchar(100) DEFAULT NULL
+  `StudentID` int(11) DEFAULT NULL,
+  `TutorLocation` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -140,24 +140,24 @@ INSERT INTO `Labs` (`LabTime`, `LabType`, `LabResult`, `PatientID`, `ClinicLocat
 -- Table structure for table `Patient`
 --
 
-CREATE TABLE `Patient` (
-  `PatientID` int(11) NOT NULL,
-  `PatientName` varchar(255) DEFAULT NULL,
+CREATE TABLE `Student` (
+  `StudentID` int(11) NOT NULL,
+  `StudentName` varchar(255) DEFAULT NULL,
   `Address` varchar(255) DEFAULT NULL,
   `City` varchar(255) DEFAULT NULL,
   `ContactNumber` varchar(15) DEFAULT NULL,
-  `PatientInformation` varchar(255) DEFAULT NULL,
-  `Prescriptions` varchar(255) DEFAULT NULL,
+  `StudentInformation` varchar(255) DEFAULT NULL,
+  `Class` varchar(255) DEFAULT NULL,
   `Diagnoses` varchar(255) DEFAULT NULL,
   `PreferredPharmacy` varchar(255) DEFAULT NULL,
   `DOB` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `Patient`
+-- Dumping data for table `Student`
 --
 
-INSERT INTO `Patient` (`PatientID`, `PatientName`, `Address`, `City`, `ContactNumber`, `PatientInformation`, `Prescriptions`, `Diagnoses`, `PreferredPharmacy`, `DOB`) VALUES
+INSERT INTO `Student` (`StudentID`, `StudentName`, `Address`, `City`, `ContactNumber`, `StudentInformation`, `Prescriptions`, `Diagnoses`, `PreferredPharmacy`, `DOB`) VALUES
 (1, 'Bobby Mckee', '432 North 31st', 'Richmond', '3179980999', 'broke leg in summer of 2021', 'propranolol, 20mg daily by mouth, extended release', 'heart arrhythmia', '', '1980-12-16'),
 (2, 'Stacy Lively', '123 North 22nd', 'Lafayette', '3176679900', '', 'Kepra, 20 mg, twice daily', '', '', '1980-01-18'),
 (3, 'John Doe', '123 Maple Ave', 'Indianapolis', '555-1234', 'Allergic to peanuts', 'Ibuprofen 200mg PRN', NULL, NULL, '1980-06-15'),
@@ -202,40 +202,40 @@ ALTER TABLE `Admin`
 -- Indexes for table `CheckUp`
 --
 ALTER TABLE `CheckUp`
-  ADD KEY `PatientID` (`PatientID`),
-  ADD KEY `DoctorID` (`DoctorID`);
+  ADD KEY `StudentID` (`StudentID`),
+  ADD KEY `TutorID` (`TutorID`);
 
 --
--- Indexes for table `Doctor`
+-- Indexes for table `Tutor`
 --
-ALTER TABLE `Doctor`
-  ADD PRIMARY KEY (`DoctorID`);
+ALTER TABLE `Tutor`
+  ADD PRIMARY KEY (`TutorID`);
 
 --
--- Indexes for table `DoctorPatient`
+-- Indexes for table `TutorStudent`
 --
-ALTER TABLE `DoctorPatient`
-  ADD PRIMARY KEY (`DoctorID`,`PatientID`),
-  ADD KEY `PatientID` (`PatientID`);
+ALTER TABLE `TutorStudent`
+  ADD PRIMARY KEY (`TutorID`,`StudentID`),
+  ADD KEY `StudentID` (`StudentID`);
 
 --
 -- Indexes for table `Labs`
 --
 ALTER TABLE `Labs`
-  ADD KEY `PatientID` (`PatientID`);
+  ADD KEY `StudentID` (`StudentID`);
 
 --
--- Indexes for table `Patient`
+-- Indexes for table `Student`
 --
-ALTER TABLE `Patient`
-  ADD PRIMARY KEY (`PatientID`);
+ALTER TABLE `Student`
+  ADD PRIMARY KEY (`StudentID`);
 
 --
 -- Indexes for table `Surgery`
 --
 ALTER TABLE `Surgery`
-  ADD KEY `PatientID` (`PatientID`),
-  ADD KEY `DoctorID` (`DoctorID`);
+  ADD KEY `StudentID` (`StudentID`),
+  ADD KEY `TutorID` (`TutorID`);
 
 --
 -- Constraints for dumped tables
@@ -245,28 +245,28 @@ ALTER TABLE `Surgery`
 -- Constraints for table `CheckUp`
 --
 ALTER TABLE `CheckUp`
-  ADD CONSTRAINT `checkup_ibfk_1` FOREIGN KEY (`PatientID`) REFERENCES `Patient` (`PatientID`),
-  ADD CONSTRAINT `checkup_ibfk_2` FOREIGN KEY (`DoctorID`) REFERENCES `Doctor` (`DoctorID`);
+  ADD CONSTRAINT `checkup_ibfk_1` FOREIGN KEY (`StudentID`) REFERENCES `Student` (`StudentID`),
+  ADD CONSTRAINT `checkup_ibfk_2` FOREIGN KEY (`TutorID`) REFERENCES `Tutor` (`TutorID`);
 
 --
--- Constraints for table `DoctorPatient`
+-- Constraints for table `TutorStudent`
 --
-ALTER TABLE `DoctorPatient`
-  ADD CONSTRAINT `doctorpatient_ibfk_1` FOREIGN KEY (`DoctorID`) REFERENCES `Doctor` (`DoctorID`),
-  ADD CONSTRAINT `doctorpatient_ibfk_2` FOREIGN KEY (`PatientID`) REFERENCES `Patient` (`PatientID`);
+ALTER TABLE `TutorStudent`
+  ADD CONSTRAINT `tutorstudent_ibfk_1` FOREIGN KEY (`TutorID`) REFERENCES `Tutor` (`TutorID`),
+  ADD CONSTRAINT `tutorstudent_ibfk_2` FOREIGN KEY (`StudentID`) REFERENCES `Student` (`StudentID`);
 
 --
 -- Constraints for table `Labs`
 --
 ALTER TABLE `Labs`
-  ADD CONSTRAINT `labs_ibfk_1` FOREIGN KEY (`PatientID`) REFERENCES `Patient` (`PatientID`);
+  ADD CONSTRAINT `labs_ibfk_1` FOREIGN KEY (`StudentID`) REFERENCES `Student` (`StudentID`);
 
 --
 -- Constraints for table `Surgery`
 --
 ALTER TABLE `Surgery`
-  ADD CONSTRAINT `surgery_ibfk_1` FOREIGN KEY (`PatientID`) REFERENCES `Patient` (`PatientID`),
-  ADD CONSTRAINT `surgery_ibfk_2` FOREIGN KEY (`DoctorID`) REFERENCES `Doctor` (`DoctorID`);
+  ADD CONSTRAINT `surgery_ibfk_1` FOREIGN KEY (`StudentID`) REFERENCES `Student` (`StudentID`),
+  ADD CONSTRAINT `surgery_ibfk_2` FOREIGN KEY (`TutorID`) REFERENCES `Tutor` (`TutorID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
