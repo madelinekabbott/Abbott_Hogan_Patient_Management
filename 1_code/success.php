@@ -4,10 +4,10 @@ require 'db_connect.php';
 include 'header.php';
 
 $isAdmin = isset($_SESSION['admin_id']);
-$isDoctor = isset($_SESSION['doctor_id']);
+$isTutor = isset($_SESSION['tutor_id']);
 $scheduleUrl = $isAdmin ? "admin_schedule_appointment.php" : "schedule_appointment.php";
 
-if (!$isAdmin && !$isDoctor) {
+if (!$isAdmin && !$isTutor) {
     header("Location: login.php");
     exit();
 }
@@ -20,7 +20,7 @@ if (!$isAdmin && !$isDoctor) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Appointment Success</title>
-    <link rel="stylesheet" href="patient_management_style.css">
+    <link rel="stylesheet" href="student_management_style.css">
 </head>
 <body>
     <div class = "container">
