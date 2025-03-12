@@ -11,25 +11,25 @@ if (!isset($_SESSION['admin_id'])) {
 if (isset($_GET['delete'])) {
     $delete_id = $_GET['delete'];
 
-    $stmt = $pdo->prepare("DELETE FROM DoctorPatient WHERE PatientID = :patient_id");
-    $stmt->execute(['patient_id' => $delete_id]);
+    $stmt = $pdo->prepare("DELETE FROM TutorStudent WHERE StudentID = :student_id");
+    $stmt->execute(['student_id' => $delete_id]);
 
-    $stmt = $pdo->prepare("DELETE FROM Patient WHERE PatientID = :patient_id");
-    $stmt->execute(['patient_id' => $delete_id]);
+    $stmt = $pdo->prepare("DELETE FROM Student WHERE StudentID = :student_id");
+    $stmt->execute(['student_id' => $delete_id]);
 
-    header("Location: manage_patients.php?deleted=true");
+    header("Location: manage_students.php?deleted=true");
     exit();
 }
 
 $stmt = $pdo->query("
     SELECT 
-        PatientID, PatientName, DOB, Address, City
+        StudentID, StudentName, DOB, Address, City
     FROM 
-        Patient
+        Student
     ORDER BY 
-        PatientName ASC
+        StudentName ASC
 ");
-$patients = $stmt->fetchAll();
+$students = $stmt->fetchAll();
 
 $deleted = isset($_GET['deleted']) && $_GET['deleted'] === 'true';
 ?>
@@ -39,17 +39,17 @@ $deleted = isset($_GET['deleted']) && $_GET['deleted'] === 'true';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Patients</title>
-    <link rel="stylesheet" href="patient_management_style.css">
+    <title>Manage Students</title>
+    <link rel="stylesheet" href="student_management_style.css">
     <script>
-        function confirmDelete(patientName) {
-            return confirm("Are you sure you want to delete " + patientName + "?");
+        function confirmDelete(studentName) {
+            return confirm("Are you sure you want to delete " + studentName + "?");
         }
     </script>
 </head>
 <body>
     <div class="container">
-        <h2 class="header">Manage Patients</h2>
+        <h2 class="header">Manage Students</h2>
         <?php if ($deleted): ?>
             <p class="success"></p>
         <?php endif; ?>
@@ -64,20 +64,20 @@ $deleted = isset($_GET['deleted']) && $_GET['deleted'] === 'true';
                 </tr>
             </thead>
             <tbody>
-                <?php if (!empty($patients)): ?>
-                    <?php foreach ($patients as $patient): ?>
+                <?php if (!empty($students)): ?>
+                    <?php foreach ($students as $student): ?>
                         <tr>
-                            <td class="table-cell"><?php echo htmlspecialchars($patient['PatientName']); ?></td>
-                            <td class="table-cell"><?php echo htmlspecialchars($patient['DOB']); ?></td>
-                            <td class="table-cell"><?php echo htmlspecialchars($patient['Address']); ?></td>
-                            <td class="table-cell"><?php echo htmlspecialchars($patient['City']); ?></td>
+                            <td class="table-cell"><?php echo htmlspecialchars($student['PatientName']); ?></td>
+                            <td class="table-cell"><?php echo htmlspecialchars($student['DOB']); ?></td>
+                            <td class="table-cell"><?php echo htmlspecialchars($student['Address']); ?></td>
+                            <td class="table-cell"><?php echo htmlspecialchars($student['City']); ?></td>
                             <td class="table-cell">
-                                <a href="view_patient.php?patient_id=<?php echo $patient['PatientID']; ?>" class="button-link">
+                                <a href="view_student.php?student_id=<?php echo $student['StudentID']; ?>" class="button-link">
                                     <button class="button">View Details</button>
                                 </a>
-                                <a href="manage_patients.php?delete=<?php echo $patient['PatientID']; ?>"
+                                <a href="manage_students.php?delete=<?php echo $student['StudentID']; ?>"
                                    class="button-link"
-                                   onclick="return confirmDelete('<?php echo htmlspecialchars($patient['PatientName']); ?>');">
+                                   onclick="return confirmDelete('<?php echo htmlspecialchars($student['StudentName']); ?>');">
                                     <button class="button button-delete">Delete Record</button>
                                 </a>
                             </td>
@@ -85,13 +85,13 @@ $deleted = isset($_GET['deleted']) && $_GET['deleted'] === 'true';
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td class="table-cell" colspan="5">No patients found.</td>
+                        <td class="table-cell" colspan="5">No students found.</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
         </table>
         <br>
-        <a href="create_patient.php" class="button">Create New Patient</a>
+        <a href="create_student.php" class="button">Create New Student</a>
         <br><br>
         <a href="logout.php" class="link">Logout</a>
     </div>
