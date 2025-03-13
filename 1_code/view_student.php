@@ -13,7 +13,7 @@ if (!$isAdmin && !$isTutor) {
     exit();
 }
 
-$patient_id = $_GET['patient_id'] ?? null;
+$student_id = $_GET['student_id'] ?? null;
 $viewUrl = $isAdmin ? "manage_students.php" : "view_records.php";
 
 if (!$student_id) {
