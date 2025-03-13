@@ -25,7 +25,7 @@ if (!$tutor) {
 }
 
 $allStudentsStmt = $pdo->query("SELECT StudentID, StudentName FROM Student ORDER BY StudentName ASC");
-$all_patients = $allStudentsStmt->fetchAll(PDO::FETCH_ASSOC);
+$all_students = $allStudentsStmt->fetchAll(PDO::FETCH_ASSOC);
 
 $assignedStudentsStmt = $pdo->prepare("
     SELECT StudentID 
@@ -58,7 +58,7 @@ $updated = isset($_GET['updated']) && $_GET['updated'] === 'true';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Patients for Dr. <?php echo htmlspecialchars($tutor['TutorName']); ?></title>
+    <title>Manage Students for Tutor <?php echo htmlspecialchars($tutor['TutorName']); ?></title>
     <link rel="stylesheet" href="student_management_style.css">
 </head>
 <body>
@@ -71,7 +71,7 @@ $updated = isset($_GET['updated']) && $_GET['updated'] === 'true';
         <form method="POST" action="">
             <p>Select the students you want to assign to a Tutor. <?php echo htmlspecialchars($tutor['TutorName']); ?>:</p>
             <div class="checkbox-container">
-                <?php foreach ($all_patients as $student): ?>
+                <?php foreach ($all_students as $student): ?>
                     <div>
                         <input type="checkbox" name="students[]" id="student_<?php echo $patient['StudentID']; ?>" 
                             value="<?php echo $student['StudentID']; ?>" 
