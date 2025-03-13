@@ -43,30 +43,30 @@ INSERT INTO `Admin` (`AdminID`, `AdminName`, `password`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `CheckUp`
+-- Table structure for table `MeetUp`
 --
 
-CREATE TABLE `CheckUp` (
-  `CheckTime` datetime DEFAULT NULL,
-  `CheckReason` varchar(255) DEFAULT NULL,
+CREATE TABLE `MeetUp` (
+  `MeetTime` datetime DEFAULT NULL,
+  `MeetReason` varchar(255) DEFAULT NULL,
   `StudentID` int(11) DEFAULT NULL,
   `TutorID` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `CheckUp`
+-- Dumping data for table `MeetUp`
 --
 
-INSERT INTO `CheckUp` (`CheckTime`, `CheckReason`, `StudentID`, `TutorID`) VALUES
-('2024-01-01 13:00:00', 'Trouble Sleeping', 2, 2214),
-('2025-12-18 12:00:00', 'Migraine', 1, 2214),
-('2024-12-15 12:00:00', 'General Wellness Check', 2, 2214),
-('2026-12-20 12:00:00', 'General Wellness Check', 2, 2214);
+INSERT INTO `MeetUp` (`MeetTime`, `MeetReason`, `StudentID`, `TutorID`) VALUES
+('2024-01-01 13:00:00', 'Math', 2, 3211),
+('2025-12-18 12:00:00', 'English', 1, 2214),
+('2024-12-15 12:00:00', 'Social Studies', 2, 3211),
+('2026-12-20 12:00:00', 'General Prep', 2, 2214);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `Doctor`
+-- Table structure for table `Tutor`
 --
 
 CREATE TABLE `Tutor` (
@@ -86,7 +86,7 @@ CREATE TABLE `Tutor` (
 
 INSERT INTO `Tutor` (`TutorID`, `TutorName`, `Department`, `password`, `DOB`, `Address`, `Email`, `PhoneNumber`) VALUES
 (2214, 'Allan House', 'English', 'securepass', '1988-12-10', '123 Elm Street, Springfield', 'ahouse@email.com', '3175550000'),
-(3211, 'Paul Bergfelder', 'Math', 'password123', '1972-05-09', '456 Oak Avenue, Shelbyville', 'pbergfelder@email.com', '3176125555');
+(3211, 'Paul Bergfelder', 'Math/Social Studies', 'password123', '1972-05-09', '456 Oak Avenue, Shelbyville', 'pbergfelder@email.com', '3176125555');
 
 -- --------------------------------------------------------
 
@@ -114,30 +114,30 @@ INSERT INTO `TutorStudent` (`TutorID`, `StudentID`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `Labs`
+-- Table structure for table `TestPrep`
 --
 
-CREATE TABLE `Labs` (
-  `LabTime` datetime DEFAULT NULL,
-  `LabType` varchar(255) DEFAULT NULL,
-  `LabResult` varchar(255) DEFAULT NULL,
+CREATE TABLE `TestPrep` (
+  `PrepTime` datetime DEFAULT NULL,
+  `PrepType` varchar(255) DEFAULT NULL,
+  `PrepLengthMin` varchar(255) DEFAULT NULL,
   `StudentID` int(11) DEFAULT NULL,
   `TutorLocation` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `Labs`
+-- Dumping data for table `TestPrep`
 --
 
-INSERT INTO `Labs` (`LabTime`, `LabType`, `LabResult`, `PatientID`, `ClinicLocation`) VALUES
-('2024-01-01 09:00:00', 'Full Blood Panel', 'Normal', 1, 'Quest Diagnostics in IU Health, Indianapolis'),
-('2024-01-01 22:00:00', 'Blood Sugar', '<100', 2, 'Quest Diagnostics at Community Hospital North, Indianapolis'),
-('2024-12-01 12:00:00', 'Full Blood Panel', NULL, 2, 'Quest Diagnostics at Northpoint Pediatrics, Noblesville, IN');
+INSERT INTO `TestPrep` (`TestTime`, `TestType`, `PrepLengthMin`, `StudentID`, `TutorLocation`) VALUES
+('2024-01-01 09:00:00', 'Math', '30 Min', 1, 'Room 25'),
+('2024-01-01 22:00:00', 'English', '15 Min', 2, 'Room 57'),
+('2024-12-01 12:00:00', 'Social Studies', '45 Min', 2, 'Room 8');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `Patient`
+-- Table structure for table `Student`
 --
 
 CREATE TABLE `Student` (
@@ -148,8 +148,8 @@ CREATE TABLE `Student` (
   `ContactNumber` varchar(15) DEFAULT NULL,
   `StudentInformation` varchar(255) DEFAULT NULL,
   `Class` varchar(255) DEFAULT NULL,
-  `Diagnoses` varchar(255) DEFAULT NULL,
-  `PreferredPharmacy` varchar(255) DEFAULT NULL,
+  `Grade` varchar(255) DEFAULT NULL,
+  `PreferredStudyMethod` varchar(255) DEFAULT NULL,
   `DOB` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -157,36 +157,36 @@ CREATE TABLE `Student` (
 -- Dumping data for table `Student`
 --
 
-INSERT INTO `Student` (`StudentID`, `StudentName`, `Address`, `City`, `ContactNumber`, `StudentInformation`, `Prescriptions`, `Diagnoses`, `PreferredPharmacy`, `DOB`) VALUES
-(1, 'Bobby Mckee', '432 North 31st', 'Richmond', '3179980999', 'broke leg in summer of 2021', 'propranolol, 20mg daily by mouth, extended release', 'heart arrhythmia', '', '1980-12-16'),
-(2, 'Stacy Lively', '123 North 22nd', 'Lafayette', '3176679900', '', 'Kepra, 20 mg, twice daily', '', '', '1980-01-18'),
-(3, 'John Doe', '123 Maple Ave', 'Indianapolis', '555-1234', 'Allergic to peanuts', 'Ibuprofen 200mg PRN', NULL, NULL, '1980-06-15'),
-(4, 'Jane Smith', '456 Pine Rd', 'Bloomington', '555-5678', 'Family history of diabetes', NULL, 'Type 2 Diabetes', NULL, '1990-12-01'),
-(5, 'Mike Johnson', '789 Oak St', 'Fort Wayne', '555-9999', NULL, NULL, 'Hypertension', 'CVS Pharmacy', '1975-03-25'),
-(6, 'Emily Davis', '321 Spruce Ln', 'Muncie', '555-2468', NULL, 'Atorvastatin 20mg daily', NULL, 'Walgreens', '1988-09-07'),
-(7, 'Robert Wilson', '654 Cedar Blvd', 'Evansville', '555-1357', 'History of mild asthma', NULL, 'Chronic bronchitis', NULL, '1965-11-20');
+INSERT INTO `Student` (`StudentID`, `StudentName`, `Address`, `City`, `ContactNumber`, `StudentInformation`, `Class`, `Grade`, `PreferredStudyMethod`, `DOB`) VALUES
+(1, 'Bobby Mckee', '432 North 31st', 'Richmond', '3179980999', '', 'Math 101', 'Freshman', 'Face to Face', '1980-12-16'),
+(2, 'Stacy Lively', '123 North 22nd', 'Lafayette', '3176679900', '', 'English 201', 'Sophmore', 'Zoom', '1980-01-18'),
+(3, 'John Doe', '123 Maple Ave', 'Indianapolis', '555-1234', 'Student needs 1 on 1 time', 'Math 202', 'Sophmore', NULL, '1980-06-15'),
+(4, 'Jane Smith', '456 Pine Rd', 'Bloomington', '555-5678', '', 'Math 401', 'Senior', NULL, '1990-12-01'),
+(5, 'Mike Johnson', '789 Oak St', 'Fort Wayne', '555-9999', NULL, 'English 101', 'Freshman', 'Face to Face', '1975-03-25'),
+(6, 'Emily Davis', '321 Spruce Ln', 'Muncie', '555-2468', NULL, 'English 101', 'Freshman', 'Face to Face', '1988-09-07'),
+(7, 'Robert Wilson', '654 Cedar Blvd', 'Evansville', '555-1357', 'Trouble Reading', 'Math 101', 'Freshman', NULL, '1965-11-20');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `Surgery`
+-- Table structure for table `HomeworkHelp`
 --
 
-CREATE TABLE `Surgery` (
-  `SurgeryTime` datetime DEFAULT NULL,
-  `SurgeryType` varchar(255) DEFAULT NULL,
-  `PatientID` int(11) DEFAULT NULL,
-  `DoctorID` int(11) DEFAULT NULL
+CREATE TABLE `HomeworkHelp` (
+  `HwTime` datetime DEFAULT NULL,
+  `HwType` varchar(255) DEFAULT NULL,
+  `StudentID` int(11) DEFAULT NULL,
+  `TutorID` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `Surgery`
+-- Dumping data for table `HomeworkHelp`
 --
 
-INSERT INTO `Surgery` (`SurgeryTime`, `SurgeryType`, `PatientID`, `DoctorID`) VALUES
-('2024-01-01 15:00:00', 'Coronary Stent Placement', 2, 3211),
-('2024-11-23 06:00:00', 'Broken Ankle', 2, 2214),
-('2026-12-20 12:00:00', 'Appendectomy', 1, 2214);
+INSERT INTO `HomeworkHelp` (`HwTime`, `HwType`, `StudentID`, `TutorID`) VALUES
+('2024-01-01 15:00:00', 'Project', 2, 3211),
+('2024-11-23 06:00:00', 'Essay', 2, 2214),
+('2026-12-20 12:00:00', 'Powerpoint', 1, 2214);
 
 --
 -- Indexes for dumped tables
@@ -199,9 +199,9 @@ ALTER TABLE `Admin`
   ADD PRIMARY KEY (`AdminID`);
 
 --
--- Indexes for table `CheckUp`
+-- Indexes for table `MeetUp`
 --
-ALTER TABLE `CheckUp`
+ALTER TABLE `MeetUp`
   ADD KEY `StudentID` (`StudentID`),
   ADD KEY `TutorID` (`TutorID`);
 
@@ -219,9 +219,9 @@ ALTER TABLE `TutorStudent`
   ADD KEY `StudentID` (`StudentID`);
 
 --
--- Indexes for table `Labs`
+-- Indexes for table `TestPrep`
 --
-ALTER TABLE `Labs`
+ALTER TABLE `TestPrep`
   ADD KEY `StudentID` (`StudentID`);
 
 --
@@ -231,9 +231,9 @@ ALTER TABLE `Student`
   ADD PRIMARY KEY (`StudentID`);
 
 --
--- Indexes for table `Surgery`
+-- Indexes for table `HomeworkHelp`
 --
-ALTER TABLE `Surgery`
+ALTER TABLE `HomeworkHelp`
   ADD KEY `StudentID` (`StudentID`),
   ADD KEY `TutorID` (`TutorID`);
 
@@ -242,11 +242,11 @@ ALTER TABLE `Surgery`
 --
 
 --
--- Constraints for table `CheckUp`
+-- Constraints for table `MeetUp`
 --
-ALTER TABLE `CheckUp`
-  ADD CONSTRAINT `checkup_ibfk_1` FOREIGN KEY (`StudentID`) REFERENCES `Student` (`StudentID`),
-  ADD CONSTRAINT `checkup_ibfk_2` FOREIGN KEY (`TutorID`) REFERENCES `Tutor` (`TutorID`);
+ALTER TABLE `MeetUp`
+  ADD CONSTRAINT `meetup_ibfk_1` FOREIGN KEY (`StudentID`) REFERENCES `Student` (`StudentID`),
+  ADD CONSTRAINT `meetup_ibfk_2` FOREIGN KEY (`TutorID`) REFERENCES `Tutor` (`TutorID`);
 
 --
 -- Constraints for table `TutorStudent`
@@ -256,17 +256,17 @@ ALTER TABLE `TutorStudent`
   ADD CONSTRAINT `tutorstudent_ibfk_2` FOREIGN KEY (`StudentID`) REFERENCES `Student` (`StudentID`);
 
 --
--- Constraints for table `Labs`
+-- Constraints for table `TestPrep`
 --
-ALTER TABLE `Labs`
-  ADD CONSTRAINT `labs_ibfk_1` FOREIGN KEY (`StudentID`) REFERENCES `Student` (`StudentID`);
+ALTER TABLE `TestPrep`
+  ADD CONSTRAINT `testprep_ibfk_1` FOREIGN KEY (`StudentID`) REFERENCES `Student` (`StudentID`);
 
 --
--- Constraints for table `Surgery`
+-- Constraints for table `HomeworkHelp`
 --
-ALTER TABLE `Surgery`
-  ADD CONSTRAINT `surgery_ibfk_1` FOREIGN KEY (`StudentID`) REFERENCES `Student` (`StudentID`),
-  ADD CONSTRAINT `surgery_ibfk_2` FOREIGN KEY (`TutorID`) REFERENCES `Tutor` (`TutorID`);
+ALTER TABLE `HomeworkHelp`
+  ADD CONSTRAINT `homeworkhelp_ibfk_1` FOREIGN KEY (`StudentID`) REFERENCES `Student` (`StudentID`),
+  ADD CONSTRAINT `homeworkhelp_ibfk_2` FOREIGN KEY (`TutorID`) REFERENCES `Tutor` (`TutorID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
