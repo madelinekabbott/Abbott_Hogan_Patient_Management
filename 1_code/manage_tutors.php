@@ -13,8 +13,8 @@ $selected_tutor_id = $_GET['tutor_id'] ?? null;
 $stmt = $pdo->query("SELECT TutorID, TutorName FROM Tutor ORDER BY TutorName ASC");
 $all_tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$doctor = null;
-$patients = [];
+$tutor = null;
+$students = [];
 
 if ($selected_tutor_id) {
     $stmt = $pdo->prepare("
@@ -34,7 +34,7 @@ if ($selected_tutor_id) {
             ORDER BY Student.StudentName ASC
         ");
         $stmt->execute(['tutor_id' => $selected_tutor_id]);
-        $patients = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 
@@ -91,7 +91,7 @@ function censorPassword($password) {
 
             <a href="edit_tutor.php?tutor_id=<?php echo urlencode($tutor['TutorID']); ?>" class="button">Edit Tutor Information</a>
 
-            <h3>Patients</h3>
+            <h3>Students</h3>
             <?php if (!empty($students)): ?>
                 <ul class="students">
                     <?php foreach ($students as $student): ?>
