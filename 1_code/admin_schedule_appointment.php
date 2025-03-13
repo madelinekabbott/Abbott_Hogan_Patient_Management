@@ -27,30 +27,30 @@ $Tutors = [];
     <script>
         function toggleAppointmentType() {
             const appointmentType = document.querySelector('input[name="appointment_type"]:checked')?.value;
-            const doctorField = document.getElementById("doctor_field");
+            const tutorField = document.getElementById("tutor_field");
 
-            // Surgery Fields
-            const surgeryFields = document.getElementById("surgery_fields");
+            // HomeworkHelp Fields
+            const homeworkhelpFields = document.getElementById("homeworkhelp_fields");
 
-            // Lab Fields
-            const labFields = document.getElementById("lab_fields");
+            // TestPrep Fields
+            const testprepFields = document.getElementById("testprep_fields");
 
-            // Checkup Fields
-            const checkupFields = document.getElementById("checkup_fields");
+            // MeetUp Fields
+            const meetupFields = document.getElementById("meetup_fields");
 
             // Hide all by default
-            surgeryFields.style.display = "none";
-            labFields.style.display = "none";
-            checkupFields.style.display = "none";
+            homeworkhelpFields.style.display = "none";
+            testprepFields.style.display = "none";
+            meetupFields.style.display = "none";
             tutorField.style.display = "none";
 
-            if (appointmentType === "surgery") {
-                surgeryFields.style.display = "block";
+            if (appointmentType === "homeworkhelp") {
+                homeworkhelpFields.style.display = "block";
                 tutorField.style.display = "block";
-            } else if (appointmentType === "lab") {
-                labFields.style.display = "block";
-            } else if (appointmentType === "checkup") {
-                checkupFields.style.display = "block";
+            } else if (appointmentType === "testprep") {
+                testprepFields.style.display = "block";
+            } else if (appointmentType === "meetup") {
+                meetupFields.style.display = "block";
                 tutorField.style.display = "block";
             }
         }
@@ -114,43 +114,43 @@ $Tutors = [];
             </div>
 
             <label class="form-label">Appointment Type:</label><br>
-            <input type="radio" id="surgery" name="appointment_type" value="surgery" onclick="toggleAppointmentType()">
-            <label for="surgery">Surgery</label><br>
-            <input type="radio" id="lab" name="appointment_type" value="lab" onclick="toggleAppointmentType()">
-            <label for="lab">Lab Test</label><br>
-            <input type="radio" id="checkup" name="appointment_type" value="checkup" onclick="toggleAppointmentType()">
-            <label for="checkup">Check Up</label><br><br>
+            <input type="radio" id="homeworkhelp" name="appointment_type" value="homeworkhelp" onclick="toggleAppointmentType()">
+            <label for="homeworkhelp">Homework Help</label><br>
+            <input type="radio" id="testprep" name="appointment_type" value="testprep" onclick="toggleAppointmentType()">
+            <label for="testprep">Test Prep</label><br>
+            <input type="radio" id="meetup" name="appointment_type" value="meetup" onclick="toggleAppointmentType()">
+            <label for="meetup">Meet Up</label><br><br>
 
-            <!-- Surgery Fields -->
-            <div id="surgery_fields" style="display: none;">
-                <label for="surgery_time" class="form-label">Select Date and Time:</label>
-                <input type="datetime-local" id="surgery_time" name="surgery_time" class="form-input" min="<?php echo date('Y-m-d\TH:i'); ?>">
+            <!-- Homework Help Fields -->
+            <div id="homeworkhelp_fields" style="display: none;">
+                <label for="homeworkhelp_time" class="form-label">Select Date and Time:</label>
+                <input type="datetime-local" id="homeworkhelp_time" name="homeworkhelp_time" class="form-input" min="<?php echo date('Y-m-d\TH:i'); ?>">
                 <br><br>
-                <label for="surgery_type" class="form-label">Surgery Type:</label>
-                <input type="text" id="surgery_type" name="surgery_type" class="form-input">
+                <label for="homeworkhelp_type" class="form-label">Homework Type:</label>
+                <input type="text" id="homeworkhelp_type" name="homeworkhelp_type" class="form-input">
                 <br><br>
             </div>
 
-            <!-- Lab Fields -->
-            <div id="lab_fields" style="display: none;">
-                <label for="lab_time" class="form-label">Select Date and Time:</label>
-                <input type="datetime-local" id="lab_time" name="lab_time" class="form-input" min="<?php echo date('Y-m-d\TH:i'); ?>">
+            <!-- Test Prep Fields -->
+            <div id="testprep_fields" style="display: none;">
+                <label for="testprep_time" class="form-label">Select Date and Time:</label>
+                <input type="datetime-local" id="testprep_time" name="testprep_time" class="form-input" min="<?php echo date('Y-m-d\TH:i'); ?>">
                 <br><br>
-                <label for="lab_type" class="form-label">Lab Test Type:</label>
-                <input type="text" id="lab_type" name="lab_type" class="form-input">
+                <label for="testprep_type" class="form-label">Test Prep Type:</label>
+                <input type="text" id="testprep_type" name="testprep_type" class="form-input">
                 <br><br>
-                <label for="clinic_location" class="form-label">Clinic Location:</label>
-                <input type="text" id="clinic_location" name="clinic_location" class="form-input">
+                <label for="testprep_location" class="form-label">Test Prep Location:</label>
+                <input type="text" id="testprep_location" name="testprep_location" class="form-input">
                 <br><br>
             </div>
 
-            <!-- Check-up Fields -->
-            <div id="checkup_fields" style="display: none;">
-                <label for="checkup_time" class="form-label">Select Date and Time:</label>
-                <input type="datetime-local" id="checkup_time" name="checkup_time" class="form-input" min="<?php echo date('Y-m-d\TH:i'); ?>">
+            <!-- Meet-up Fields -->
+            <div id="meetup_fields" style="display: none;">
+                <label for="meetup_time" class="form-label">Select Date and Time:</label>
+                <input type="datetime-local" id="meetup_time" name="meetup_time" class="form-input" min="<?php echo date('Y-m-d\TH:i'); ?>">
                 <br><br>
-                <label for="checkup_reason" class="form-label">Check-up Reason:</label>
-                <input type="text" id="checkup_reason" name="checkup_reason" class="form-input">
+                <label for="meetup_reason" class="form-label">Meet-up Reason:</label>
+                <input type="text" id="meetup_reason" name="meetup_reason" class="form-input">
                 <br><br>
             </div>
 
