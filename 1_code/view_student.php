@@ -28,7 +28,7 @@ if ($isTutor) {
         SELECT 
             StudentName, DOB, Address, City, 
             ContactNumber, StudentInformation, 
-            Prescriptions, Diagnoses, PreferredPharmacy
+            Class, Grade, PreferredStudyMethod
         FROM 
             Student
         JOIN 
@@ -45,7 +45,7 @@ if ($isTutor) {
         SELECT 
             StudentName, DOB, Address, City, 
             ContactNumber, StudentInformation, 
-            Prescriptions, Diagnoses, PreferredPharmacy
+            Class, Grade, PreferredStudyMethod
         FROM 
             Student
         WHERE Student.StudentID = :student_id
@@ -76,12 +76,12 @@ if (!$student) {
         <p><strong>Address:</strong> <?php echo htmlspecialchars($student['Address']); ?></p>
         <p><strong>City:</strong> <?php echo htmlspecialchars($student['City']); ?></p>
         <p><strong>Contact Number:</strong> <?php echo htmlspecialchars($student['ContactNumber']); ?></p>
-        <p><strong>Additional Information:</strong> <?php echo htmlspecialchars($student['PatientInformation']); ?></p>
-        <p><strong>Prescriptions:</strong> <?php echo htmlspecialchars($student['Prescriptions']); ?></p>
-        <p><strong>Diagnoses:</strong> <?php echo htmlspecialchars($student['Diagnoses']); ?></p>
-        <p><strong>Preferred Pharmacy:</strong> <?php echo htmlspecialchars($student['PreferredPharmacy']); ?></p>
+        <p><strong>Student Information:</strong> <?php echo htmlspecialchars($student['StudentInformation']); ?></p>
+        <p><strong>Class:</strong> <?php echo htmlspecialchars($student['Grade']); ?></p>
+        <p><strong>Grade:</strong> <?php echo htmlspecialchars($student['Class']); ?></p>
+        <p><strong>Preferred Study Method:</strong> <?php echo htmlspecialchars($student['PreferredStudyMethod']); ?></p>
 
-        <a href="edit_student.php?student_id=<?php echo $patient_id; ?>" class="button">Edit Student Information</a>
+        <a href="edit_student.php?student_id=<?php echo $student_id; ?>" class="button">Edit Student Information</a>
         <br>
         <a href="<?php echo $viewUrl; ?>" class="button">Back to Student List</a>
     </div>
