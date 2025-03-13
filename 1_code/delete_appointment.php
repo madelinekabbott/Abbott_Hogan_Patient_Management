@@ -1,7 +1,7 @@
 <?php
 session_start();
 $isAdmin = isset($_SESSION['admin_id']);
-$isDoctor = isset($_SESSION['tutor_id']);
+$isTutor = isset($_SESSION['tutor_id']);
 
 if (!$isAdmin && !$isTutor) {
     header("Location: login.php");
@@ -14,13 +14,13 @@ $type = $_GET['type'];
 $student_id = $_GET['student_id'];
 $time = $_GET['time'];
 
-$doctor_id = $isTutor ? $_SESSION['tutor_id'] : null;
+$tutor_id = $isTutor ? $_SESSION['tutor_id'] : null;
 
 switch ($type) {
-    case 'surgery':
+    case 'homeworkhelp':
         $stmt = $pdo->prepare(
-            $isTutor ? "DELETE FROM Surgery WHERE StudentID = :student_id AND SurgeryTime = :time AND TutorID = :tutor_id" :
-                        "DELETE FROM Surgery WHERE StudentID = :student_id AND SurgeryTime = :time"
+            $isTutor ? "DELETE FROM HomeworkHelp WHERE StudentID = :student_id AND HwTime = :time AND TutorID = :tutor_id" :
+                        "DELETE FROM HomeworkHelp WHERE StudentID = :student_id AND HwTime = :time"
         );
         break;
     case 'lab':
