@@ -9,10 +9,10 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
-$edit_doctor_id = $_GET['tutor_id'] ?? null;
+$edit_tutor_id = $_GET['tutor_id'] ?? null;
 
 if (!$edit_tutor_id) {
-    echo "No doctor specified.";
+    echo "No tutor specified.";
     exit();
 }
 
@@ -30,7 +30,7 @@ if (!$tutor) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $doctorName = $_POST['Tutor_name'];
+    $tutorName = $_POST['Tutor_name'];
     $department = $_POST['department'];
     $dob = $_POST['dob'];
     $address = $_POST['address'];
@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <button type="submit" class="button">Update Tutor Information</button>
             </div>
         </form>
-        <a href="manage_tutors.php?doctor_id=<?php echo urlencode($edit_doctor_id); ?>" class="button">Cancel</a>
+        <a href="manage_tutors.php?tutor_id=<?php echo urlencode($edit_doctor_id); ?>" class="button">Cancel</a>
     </div>
 </body>
 </html>
