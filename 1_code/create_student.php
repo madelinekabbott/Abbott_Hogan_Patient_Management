@@ -11,29 +11,29 @@ if (!isset($_SESSION['admin_id'])) {
 $errorMessage = ""; 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $studentId          = $_POST['patient_id'];
-    $studentName        = $_POST['patient_name'];
+    $studentId          = $_POST['student_id'];
+    $studentName        = $_POST['student_name'];
     $address            = $_POST['address'];
     $city               = $_POST['city'];
     $contactNumber      = $_POST['contact_number'];
     $dob                = $_POST['dob'];
-    $patientInformation = $_POST['patient_information'] ?? null;
-    $prescriptions      = $_POST['prescriptions'] ?? null;
-    $diagnoses          = $_POST['diagnoses'] ?? null;
-    $preferredPharmacy  = $_POST['preferred_pharmacy'] ?? null;
+    $studentInformation = $_POST['student_information'] ?? null;
+    $class              = $_POST['class'] ?? null;
+    $grade          = $_POST['grade'] ?? null;
+    $preferredStudyMethod  = $_POST['preferred_study_method'] ?? null;
 
     $stmt = $pdo->prepare("
-        INSERT INTO Patient (
+        INSERT INTO Student (
             StudentID, 
             StudentName, 
             Address, 
             City, 
             ContactNumber, 
             DOB, 
-            PatientInformation, 
-            Prescriptions, 
-            Diagnoses, 
-            PreferredPharmacy
+            StudentInformation, 
+            Class, 
+            Grade, 
+            PreferredStudyMethod
         ) VALUES (
             :student_id, 
             :student_name, 
@@ -41,10 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             :city, 
             :contact_number, 
             :dob, 
-            :patient_information, 
-            :prescriptions, 
-            :diagnoses, 
-            :preferred_pharmacy
+            :student_information, 
+            :class, 
+            :grade, 
+            :preferred_study_method
         )
     ");
 
@@ -56,10 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'city'                 => $city,
             'contact_number'       => $contactNumber,
             'dob'                  => $dob,
-            'patient_information'  => $patientInformation,
-            'prescriptions'        => $prescriptions,
-            'diagnoses'            => $diagnoses,
-            'preferred_pharmacy'   => $preferredPharmacy
+            'student_information'  => $studentInformation,
+            'class'                => $class,
+            'grade'                => $grade,
+            'preferred_study_method'   => $preferredStudyMethod
         ]);
 
         header("Location: manage_students.php?created=true");
@@ -121,25 +121,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <td><label for="dob">Date of Birth:</label></td>
                     <td><input type="date" name="dob" id="dob" required></td>
                 </tr>
-                <!-- Patient Information (optional) -->
+                <!-- Student Information (optional) -->
                 <tr>
-                    <td><label for="patient_information">Patient Information:</label></td>
-                    <td><textarea name="patient_information" id="patient_information" rows="3"></textarea></td>
+                    <td><label for="student_information">Student Information:</label></td>
+                    <td><textarea name="student_information" id="student_information" rows="3"></textarea></td>
                 </tr>
-                <!-- Prescriptions (optional) -->
+                <!-- Class (optional) -->
                 <tr>
-                    <td><label for="prescriptions">Prescriptions:</label></td>
-                    <td><textarea name="prescriptions" id="prescriptions" rows="3"></textarea></td>
+                    <td><label for="class">Class:</label></td>
+                    <td><textarea name="class" id="class" rows="3"></textarea></td>
                 </tr>
-                <!-- Diagnoses (optional) -->
+                <!-- Grade (optional) -->
                 <tr>
-                    <td><label for="diagnoses">Diagnoses:</label></td>
-                    <td><textarea name="diagnoses" id="diagnoses" rows="3"></textarea></td>
+                    <td><label for="grade">Grade:</label></td>
+                    <td><textarea name="grade" id="grade" rows="3"></textarea></td>
                 </tr>
-                <!-- Preferred Pharmacy (optional) -->
+                <!-- Preferred Study Mehtod (optional) -->
                 <tr>
-                    <td><label for="preferred_pharmacy">Preferred Pharmacy:</label></td>
-                    <td><input type="text" name="preferred_pharmacy" id="preferred_pharmacy" style="width: 200px;"></td>
+                    <td><label for="preferred_study_method">Preferred Study Method:</label></td>
+                    <td><input type="text" name="preferred_study_method" id="preferred_study_method" style="width: 200px;"></td>
                 </tr>
                 <!-- Submit / Cancel -->
                 <tr>
