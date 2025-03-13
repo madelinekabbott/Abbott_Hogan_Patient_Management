@@ -23,18 +23,18 @@ switch ($type) {
                         "DELETE FROM HomeworkHelp WHERE StudentID = :student_id AND HwTime = :time"
         );
         break;
-    case 'lab':
+    case 'testprep':
         $stmt = $pdo->prepare(
-            $isTutor ? "DELETE FROM Labs WHERE StudentID = :student_id AND LabTime = :time AND EXISTS (
-                            SELECT 1 FROM DoctorPatient WHERE TutorID = :tutor_id AND StudentID = :student_id
+            $isTutor ? "DELETE FROM TestPrep WHERE StudentID = :student_id AND TestPrepTime = :time AND EXISTS (
+                            SELECT 1 FROM TutorStudent WHERE TutorID = :tutor_id AND StudentID = :student_id
                         )" :
-                        "DELETE FROM Labs WHERE StudentID = :student_id AND LabTime = :time"
+                        "DELETE FROM TestPrep WHERE StudentID = :student_id AND TestPrepTime = :time"
         );
         break;
-    case 'checkup':
+    case 'meetup':
         $stmt = $pdo->prepare(
-            $isTutor ? "DELETE FROM CheckUp WHERE StudentID = :student_id AND CheckTime = :time AND TutorID = :tutor_id" :
-                        "DELETE FROM CheckUp WHERE StudentID = :student_id AND CheckTime = :time"
+            $isTutor ? "DELETE FROM MeetUp WHERE StudentID = :student_id AND MeetUpTime = :time AND TutorID = :tutor_id" :
+                        "DELETE FROM MeetUp WHERE StudentID = :student_id AND MeetUpTime = :time"
         );
         break;
     default:
@@ -43,7 +43,7 @@ switch ($type) {
 }
 
 $params = [
-    ':patient_id' => $student_id,
+    ':student_id' => $student_id,
     ':time' => $time
 ];
 if ($isTutor) {
