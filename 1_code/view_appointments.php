@@ -4,9 +4,9 @@ require 'db_connect.php';
 include 'header.php';
 
 $isAdmin = isset($_SESSION['admin_id']);
-$isDoctor = isset($_SESSION['doctor_id']);
+$isTutor = isset($_SESSION['tutor_id']);
 
-if (!$isAdmin && !$isDoctor) {
+if (!$isAdmin && !$isTutor) {
     header("Location: login.php");
     exit();
 }
@@ -26,14 +26,14 @@ if ($view === 'past') {
 if ($isAdmin) {
     $surgery_stmt = $pdo->query("
         SELECT 
-            Surgery.PatientID, 
-            Patient.PatientName, 
+            Surgery.StudentID, 
+            Student.StudentName, 
             Surgery.SurgeryTime, 
             Surgery.SurgeryType,
-            Doctor.DoctorName
+            Tutor.TutorName
         FROM Surgery
-        JOIN Patient ON Surgery.PatientID = Patient.PatientID
-        JOIN Doctor ON Surgery.DoctorID = Doctor.DoctorID
+        JOIN Student ON Surgery.StudentID = Student.StudentID
+        JOIN Tutor ON Surgery.TutorID = Tutor.TutorID
         WHERE Surgery.SurgeryTime $timeCondition
         ORDER BY Surgery.SurgeryTime DESC
     ");
@@ -41,13 +41,13 @@ if ($isAdmin) {
 
     $lab_stmt = $pdo->query("
         SELECT 
-            Labs.PatientID, 
-            Patient.PatientName, 
+            Labs.StudentID, 
+            Student.StudentName, 
             Labs.LabTime, 
             Labs.LabType, 
             Labs.ClinicLocation
         FROM Labs
-        JOIN Patient ON Labs.PatientID = Patient.PatientID
+        JOIN Student ON Labs.StudentID = Student.StudentID
         WHERE Labs.LabTime $timeCondition
         ORDER BY Labs.LabTime DESC
     ");
@@ -55,67 +55,67 @@ if ($isAdmin) {
 
     $checkup_stmt = $pdo->query("
         SELECT 
-            CheckUp.PatientID, 
-            Patient.PatientName, 
+            CheckUp.StudentID, 
+            Student.StudentName, 
             CheckUp.CheckTime, 
             CheckUp.CheckReason,
-            Doctor.DoctorName
+            Tutor.TutorName
         FROM CheckUp
-        JOIN Patient ON CheckUp.PatientID = Patient.PatientID
-        JOIN Doctor ON CheckUp.DoctorID = Doctor.DoctorID
+        JOIN Student ON CheckUp.StudentID = Student.StudentID
+        JOIN Tutor ON CheckUp.TutorID = Tutor.TutorID
         WHERE CheckUp.CheckTime $timeCondition
         ORDER BY CheckUp.CheckTime DESC
     ");
     $checkups = $checkup_stmt->fetchAll();
 
 } else {
-    $doctor_id = $_SESSION['doctor_id'];
+    $tutor_id = $_SESSION['tutor_id'];
 
     $surgery_stmt = $pdo->prepare("
         SELECT 
-            Surgery.PatientID,
-            Patient.PatientName,
+            Surgery.StudentID,
+            Student.StudentName,
             Surgery.SurgeryTime,
             Surgery.SurgeryType
         FROM Surgery
-        JOIN Patient ON Surgery.PatientID = Patient.PatientID
-        WHERE Surgery.DoctorID = :doctor_id
+        JOIN Patient ON Surgery.StudentID = Student.StudentID
+        WHERE Surgery.TutorID = :tutor_id
           AND Surgery.SurgeryTime $timeCondition
         ORDER BY Surgery.SurgeryTime DESC
     ");
-    $surgery_stmt->execute(['doctor_id' => $doctor_id]);
+    $surgery_stmt->execute(['tutor_id' => $tutor_id]);
     $surgeries = $surgery_stmt->fetchAll();
 
     $lab_stmt = $pdo->prepare("
         SELECT 
-            Labs.PatientID,
-            Patient.PatientName,
+            Labs.StudentID,
+            Student.StudentName,
             Labs.LabTime,
             Labs.LabType,
             Labs.ClinicLocation
         FROM Labs
-        JOIN Patient ON Labs.PatientID = Patient.PatientID
-        JOIN DoctorPatient ON Labs.PatientID = DoctorPatient.PatientID
-        WHERE DoctorPatient.DoctorID = :doctor_id
+        JOIN Student ON Labs.StudentID = Student.StudentID
+        JOIN TutorStudent ON Labs.StudentID = TutorStudent.StudentID
+        WHERE TutorStudent.TutorID = :tutor_id
           AND Labs.LabTime $timeCondition
         ORDER BY Labs.LabTime DESC
     ");
-    $lab_stmt->execute(['doctor_id' => $doctor_id]);
+    $lab_stmt->execute(['tutor_id' => $tutor_id]);
     $labs = $lab_stmt->fetchAll();
 
     $checkup_stmt = $pdo->prepare("
         SELECT 
-            CheckUp.PatientID,
-            Patient.PatientName,
+            CheckUp.StudentID,
+            Student.StudentName,
             CheckUp.CheckTime,
             CheckUp.CheckReason
         FROM CheckUp
-        JOIN Patient ON CheckUp.PatientID = Patient.PatientID
-        WHERE CheckUp.DoctorID = :doctor_id
+        JOIN Student ON CheckUp.StudentID = Student.StudentID
+        WHERE CheckUp.TutorID = :tutor_id
           AND CheckUp.CheckTime $timeCondition
         ORDER BY CheckUp.CheckTime DESC
     ");
-    $checkup_stmt->execute(['doctor_id' => $doctor_id]);
+    $checkup_stmt->execute(['tutor_id' => $tutor_id]);
     $checkups = $checkup_stmt->fetchAll();
 }
 ?>
@@ -126,7 +126,7 @@ if ($isAdmin) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scheduled Appointments</title>
-    <link rel="stylesheet" href="patient_management_style.css">
+    <link rel="stylesheet" href="student_management_style.css">
 </head>
 <body>
 <div class="container">
@@ -147,11 +147,11 @@ if ($isAdmin) {
     <table class="appt-table">
         <thead>
             <tr>
-                <th>Patient Name</th>
+                <th>Student Name</th>
                 <th>Surgery Time</th>
                 <th>Surgery Type</th>
                 <?php if ($isAdmin): ?>
-                    <th>Assigned Doctor</th>
+                    <th>Assigned Tutor</th>
                 <?php endif; ?>
                 <th>Actions</th>
             </tr>
@@ -160,15 +160,15 @@ if ($isAdmin) {
             <?php if (!empty($surgeries)): ?>
                 <?php foreach ($surgeries as $surgery): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($surgery['PatientName']); ?></td>
+                        <td><?php echo htmlspecialchars($surgery['StudentName']); ?></td>
                         <td><?php echo htmlspecialchars($surgery['SurgeryTime']); ?></td>
                         <td><?php echo htmlspecialchars($surgery['SurgeryType']); ?></td>
                         <?php if ($isAdmin): ?>
-                            <td><?php echo htmlspecialchars($surgery['DoctorName']); ?></td>
+                            <td><?php echo htmlspecialchars($surgery['TutorName']); ?></td>
                         <?php endif; ?>
                         <td class="appt-cell">
-                            <a href="edit_appointment.php?type=surgery&patient_id=<?php echo $surgery['PatientID']; ?>&time=<?php echo urlencode($surgery['SurgeryTime']); ?>">Edit</a> |
-                            <a href="delete_appointment.php?type=surgery&patient_id=<?php echo $surgery['PatientID']; ?>&time=<?php echo urlencode($surgery['SurgeryTime']); ?>" 
+                            <a href="edit_appointment.php?type=surgery&patient_id=<?php echo $surgery['StudentID']; ?>&time=<?php echo urlencode($surgery['SurgeryTime']); ?>">Edit</a> |
+                            <a href="delete_appointment.php?type=surgery&patient_id=<?php echo $surgery['StudentID']; ?>&time=<?php echo urlencode($surgery['SurgeryTime']); ?>" 
                                onclick="return confirm('Are you sure you want to delete this appointment?');">
                                 Delete
                             </a>
@@ -188,7 +188,7 @@ if ($isAdmin) {
     <table class="appt-table">
         <thead>
             <tr>
-                <th>Patient Name</th>
+                <th>Student Name</th>
                 <th>Lab Time</th>
                 <th>Lab Type</th>
                 <th>Clinic Location</th>
@@ -199,13 +199,13 @@ if ($isAdmin) {
             <?php if (!empty($labs)): ?>
                 <?php foreach ($labs as $lab): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($lab['PatientName']); ?></td>
+                        <td><?php echo htmlspecialchars($lab['StudentName']); ?></td>
                         <td><?php echo htmlspecialchars($lab['LabTime']); ?></td>
                         <td><?php echo htmlspecialchars($lab['LabType']); ?></td>
                         <td><?php echo htmlspecialchars($lab['ClinicLocation']); ?></td>
                         <td class="appt-cell">
-                            <a href="edit_appointment.php?type=lab&patient_id=<?php echo $lab['PatientID']; ?>&time=<?php echo urlencode($lab['LabTime']); ?>">Edit</a> |
-                            <a href="delete_appointment.php?type=lab&patient_id=<?php echo $lab['PatientID']; ?>&time=<?php echo urlencode($lab['LabTime']); ?>" 
+                            <a href="edit_appointment.php?type=lab&patient_id=<?php echo $lab['StudentID']; ?>&time=<?php echo urlencode($lab['LabTime']); ?>">Edit</a> |
+                            <a href="delete_appointment.php?type=lab&patient_id=<?php echo $lab['StudentID']; ?>&time=<?php echo urlencode($lab['LabTime']); ?>" 
                                onclick="return confirm('Are you sure you want to delete this appointment?');">
                                 Delete
                             </a>
@@ -225,11 +225,11 @@ if ($isAdmin) {
     <table class="appt-table">
         <thead>
             <tr>
-                <th>Patient Name</th>
+                <th>Student Name</th>
                 <th>Check-Up Time</th>
                 <th>Check-Up Reason</th>
                 <?php if ($isAdmin): ?>
-                    <th>Assigned Doctor</th>
+                    <th>Assigned Tutor</th>
                 <?php endif; ?>
                 <th>Actions</th>
             </tr>
@@ -238,15 +238,15 @@ if ($isAdmin) {
             <?php if (!empty($checkups)): ?>
                 <?php foreach ($checkups as $checkup): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($checkup['PatientName']); ?></td>
+                        <td><?php echo htmlspecialchars($checkup['StudentName']); ?></td>
                         <td><?php echo htmlspecialchars($checkup['CheckTime']); ?></td>
                         <td><?php echo htmlspecialchars($checkup['CheckReason']); ?></td>
                         <?php if ($isAdmin): ?>
-                            <td><?php echo htmlspecialchars($checkup['DoctorName']); ?></td>
+                            <td><?php echo htmlspecialchars($checkup['TutorName']); ?></td>
                         <?php endif; ?>
                         <td class="appt-cell">
-                            <a href="edit_appointment.php?type=checkup&patient_id=<?php echo $checkup['PatientID']; ?>&time=<?php echo urlencode($checkup['CheckTime']); ?>">Edit</a> |
-                            <a href="delete_appointment.php?type=checkup&patient_id=<?php echo $checkup['PatientID']; ?>&time=<?php echo urlencode($checkup['CheckTime']); ?>" 
+                            <a href="edit_appointment.php?type=checkup&patient_id=<?php echo $checkup['StudentID']; ?>&time=<?php echo urlencode($checkup['CheckTime']); ?>">Edit</a> |
+                            <a href="delete_appointment.php?type=checkup&patient_id=<?php echo $checkup['StudentID']; ?>&time=<?php echo urlencode($checkup['CheckTime']); ?>" 
                                onclick="return confirm('Are you sure you want to delete this appointment?');">
                                 Delete
                             </a>
