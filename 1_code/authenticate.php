@@ -21,9 +21,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($user) {
         if ($role === 'tutor') {
-            $_SESSION['tutor_id'] = $user['DoctorID'];
-            $_SESSION['tutor_name'] = $user['DoctorName'];
-            header("Location: doctor_dashboard.php");  
+            $_SESSION['tutor_id'] = $user['TutorID'];
+            $_SESSION['tutor_name'] = $user['TutorName'];
+            header("Location: tutor_dashboard.php");  
         } elseif ($role === 'admin') {
             $_SESSION['admin_id'] = $user['AdminID'];
             $_SESSION['admin_name'] = $user['AdminName'];
