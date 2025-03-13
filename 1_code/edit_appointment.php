@@ -20,7 +20,7 @@ $tutor_id = $isTutor ? $_SESSION['tutor_id'] : null;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $new_time = $_POST['time'];
     $new_details = $_POST['details'];
-    $new_location = isset($_POST['clinic_location']) ? $_POST['clinic_location'] : null;
+    $new_location = isset($_POST['tutor_location']) ? $_POST['tutor_location'] : null;
 
     switch ($type) {
         case 'homeworkhelp':
@@ -31,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             break;
         case 'testprep':
             $stmt = $pdo->prepare(
-                $isTutor ? "UPDATE TestPrep SET TestPrepTime = :new_time, TestPrepType = :new_details, TestPrepLocation = :new_location WHERE StudentID = :student_id AND TestPrepTime = :time AND EXISTS (SELECT 1 FROM TutorStudent WHERE TutorID = :tutor_id AND StudentID = :student_id)" :
-                            "UPDATE TestPrep SET TestPrepTime = :new_time, TestPrepType = :new_details, TestPrepLocation = :new_location WHERE StudentID = :student_id AND TestPrepTime = :time"
+                $isTutor ? "UPDATE TestPrep SET TestPrepTime = :new_time, TestPrepType = :new_details, TutorLocation = :new_location WHERE StudentID = :student_id AND TestPrepTime = :time AND EXISTS (SELECT 1 FROM TutorStudent WHERE TutorID = :tutor_id AND StudentID = :student_id)" :
+                            "UPDATE TestPrep SET TestPrepTime = :new_time, TestPrepType = :new_details, TutorLocation = :new_location WHERE StudentID = :student_id AND TestPrepTime = :time"
             );
             break;
         case 'meetup':
@@ -76,8 +76,8 @@ switch ($type) {
         break;
     case 'testprep':
         $stmt = $pdo->prepare(
-            $isTutor ? "SELECT TestPrepTime AS time, TestPrepType AS details, TestPrepLocation AS location FROM TestPrep WHERE StudentID = :student_id AND TestPrepTime = :time AND EXISTS (SELECT 1 FROM TutorStudent WHERE TutorID = :tutor_id AND StudentID = :student_id)" :
-                        "SELECT TestPrepTime AS time, TestPrepType AS details, TestPrepLocation AS location FROM TestPrep WHERE StudentID = :student_id AND TestPrepTime = :time"
+            $isTutor ? "SELECT TestPrepTime AS time, TestPrepType AS details, TutorLocation AS location FROM TestPrep WHERE StudentID = :student_id AND TestPrepTime = :time AND EXISTS (SELECT 1 FROM TutorStudent WHERE TutorID = :tutor_id AND StudentID = :student_id)" :
+                        "SELECT TestPrepTime AS time, TestPrepType AS details, TutorLocation AS location FROM TestPrep WHERE StudentID = :student_id AND TestPrepTime = :time"
         );
         break;
     case 'meetup':
@@ -128,9 +128,9 @@ if (!$appointment) {
             <input type="text" class="input" name="details" id="details" value="<?php echo htmlspecialchars($appointment['details']); ?>" required>
             <br>
 
-            <?php if ($type === 'lab'): ?>
-                <label for="test_prep_location">Test Prep Location:</label>
-                <input type="text" class="input" name="test_prep_location" id="test_prep_location" value="<?php echo htmlspecialchars($appointment['location']); ?>">
+            <?php if ($type === 'testprep'): ?>
+                <label for="tutor_location">Tutor Location:</label>
+                <input type="text" class="input" name="tutor_location" id="tutor_location" value="<?php echo htmlspecialchars($appointment['location']); ?>">
                 <br>
             <?php endif; ?>
 
