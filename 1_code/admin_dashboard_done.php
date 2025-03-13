@@ -26,8 +26,8 @@ $student = $stmt->fetchAll();
         <h2>Welcome, Admin <?php echo htmlspecialchars($_SESSION['admin_name']); ?>!</h2>
         <p class="text">Select an option below:</p>
         <ul class="options">
-            <li><a href="manage_tutors.php">Manage Doctors</a></li>
-            <li><a href="manage_students.php">Manage Patients</a></li>
+            <li><a href="manage_tutors.php">Manage Tutors</a></li>
+            <li><a href="manage_students.php">Manage Students</a></li>
             <li><a href="view_appointments.php">View All Appointments</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
@@ -37,8 +37,8 @@ $student = $stmt->fetchAll();
             <?php if ($students): ?>
                 <?php foreach ($students as $student): ?>
                     <li>
-                        <?php echo htmlspecialchars($patient['StudentName']); ?> - 
-                        <?php echo htmlspecialchars($patient['ContactNumber']); ?>
+                        <?php echo htmlspecialchars($student['StudentName']); ?> - 
+                        <?php echo htmlspecialchars($student['ContactNumber']); ?>
                     </li>
                 <?php endforeach; ?>
             <?php else: ?>
