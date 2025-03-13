@@ -11,7 +11,7 @@ if (!$isAdmin && !$isTutor) {
     exit();
 }
 
-$patient_id = $_GET['student_id'] ?? null;
+$student_id = $_GET['student_id'] ?? null;
 
 if (!$student_id) {
     echo "No Student specified.";
@@ -25,7 +25,7 @@ try {
             SELECT 
                 StudentName, DOB, Address, City, 
                 ContactNumber, StudentInformation, 
-                Prescriptions, Diagnoses, PreferredPharmacy
+                Class, Grade, PreferredStudyMethod
             FROM 
                 Student
             JOIN 
@@ -40,7 +40,7 @@ try {
             SELECT 
                 StudentName, DOB, Address, City, 
                 ContactNumber, StudentInformation, 
-                Prescriptions, Diagnoses, PreferredPharmacy
+                Class, Grade, PreferredStudyMethod
             FROM 
                 Student
             WHERE 
@@ -67,17 +67,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $city = $_POST['city'];
     $contactNumber = $_POST['contact_number'];
     $studentInformation = $_POST['student_information'];
-    $prescriptions = $_POST['prescriptions'];
-    $diagnoses = $_POST['diagnoses'];
-    $preferredPharmacy = $_POST['preferred_pharmacy'];
+    $class = $_POST['class'];
+    $grade = $_POST['grade'];
+    $preferredStudyMethod = $_POST['preferred_study_method'];
 
     try {
         $updateStmt = $pdo->prepare("
             UPDATE Student
             SET StudentName = :student_name, DOB = :dob, Address = :address, 
                 City = :city, ContactNumber = :contact_number, 
-                StudentInformation = :student_information, Prescriptions = :prescriptions, 
-                Diagnoses = :diagnoses, PreferredPharmacy = :preferred_pharmacy 
+                StudentInformation = :student_information, Class = :class, 
+                Grade = :grade, PreferredStudyMethod = :preferred_study_method 
             WHERE StudentID = :student_id
         ");
         
@@ -88,9 +88,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'city' => $city,
             'contact_number' => $contactNumber,
             'student_information' => $studentInformation,
-            'prescriptions' => $prescriptions,
-            'diagnoses' => $diagnoses,
-            'preferred_pharmacy' => $preferredPharmacy,
+            'class' => $class,
+            'grade' => $grade,
+            'preferred_study_method' => $preferredStudyMethod,
             'student_id' => $student_id
         ]);
 
@@ -135,26 +135,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="text" name="contact_number" id="contact_number" value="<?php echo htmlspecialchars($student['ContactNumber']); ?>" required>
             </div>
             <div class="form-group text">
-                <label for="patient_information">Additional Information:</label>
-                <textarea name="patient_information" id="patient_information" rows="4"><?php echo htmlspecialchars($student['StudentInformation']); ?></textarea>
+                <label for="student_information">Additional Information:</label>
+                <textarea name="student_information" id="student_information" rows="4"><?php echo htmlspecialchars($student['StudentInformation']); ?></textarea>
             </div>
             <div class="form-group text">
-                <label for="prescriptions">Prescriptions:</label>
-                <textarea name="prescriptions" id="prescriptions" rows="4"><?php echo htmlspecialchars($student['Prescriptions']); ?></textarea>
+                <label for="class">Class:</label>
+                <textarea name="class" id="class" rows="4"><?php echo htmlspecialchars($student['Class']); ?></textarea>
             </div>
             <div class="form-group text">
-                <label for="diagnoses">Diagnoses:</label>
-                <textarea name="diagnoses" id="diagnoses" rows="4"><?php echo htmlspecialchars($student['Diagnoses']); ?></textarea>
+                <label for="grade">Grade:</label>
+                <textarea name="grade" id="grade" rows="4"><?php echo htmlspecialchars($student['Grade']); ?></textarea>
             </div>
             <div class="form-group text">
-                <label for="preferred_pharmacy">Preferred Pharmacy:</label>
-                <input type="text" name="preferred_pharmacy" id="preferred_pharmacy" value="<?php echo htmlspecialchars($student['PreferredPharmacy']); ?>">
+                <label for="preferred_study_method">Preferred Study Method:</label>
+                <input type="text" name="preferred_study_method" id="preferred__study_method" value="<?php echo htmlspecialchars($student['PreferredStudyMethod']); ?>">
             </div>
             <div class="form-group text">
                 <button type="submit" class="button">Update Student Information</button>
             </div>
         </form>
-        <a href="view_patient.php?patient_id=<?php echo $student_id; ?>" class="button">Cancel</a>
+        <a href="view_student.php?patient_id=<?php echo $student_id; ?>" class="button">Cancel</a>
     </div>
 </body>
 </html>
