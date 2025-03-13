@@ -1,7 +1,7 @@
 <?php
 session_start();
 $isAdmin = isset($_SESSION['admin_id']);
-$isDoctor = isset($_SESSION['Tutor_id']);
+$isTutor = isset($_SESSION['Tutor_id']);
 
 if (!$isAdmin && !$isTutor) {
     header("Location: login.php");
@@ -15,7 +15,7 @@ $type = $_GET['type'];
 $student_id = $_GET['student_id'];
 $time = $_GET['time'];
 
-$doctor_id = $isTutor ? $_SESSION['tutor_id'] : null;
+$tutor_id = $isTutor ? $_SESSION['tutor_id'] : null;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $new_time = $_POST['time'];
@@ -23,22 +23,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $new_location = isset($_POST['clinic_location']) ? $_POST['clinic_location'] : null;
 
     switch ($type) {
-        case 'surgery':
+        case 'homeworkhelp':
             $stmt = $pdo->prepare(
-                $isTutor ? "UPDATE Surgery SET SurgeryTime = :new_time, SurgeryType = :new_details WHERE StudentID = :student_id AND SurgeryTime = :time AND TutorID = :tutor_id" :
-                            "UPDATE Surgery SET SurgeryTime = :new_time, SurgeryType = :new_details WHERE StudentID = :student_id AND SurgeryTime = :time"
+                $isTutor ? "UPDATE HomeworkHelp SET HwTime = :new_time, HwType = :new_details WHERE StudentID = :student_id AND HwTime = :time AND TutorID = :tutor_id" :
+                            "UPDATE HomeworkHelp SET HwTime = :new_time, HwType = :new_details WHERE StudentID = :student_id AND HwTime = :time"
             );
             break;
-        case 'lab':
+        case 'testprep':
             $stmt = $pdo->prepare(
-                $isTutor ? "UPDATE Labs SET LabTime = :new_time, LabType = :new_details, ClinicLocation = :new_location WHERE StudentID = :patient_id AND LabTime = :time AND EXISTS (SELECT 1 FROM TutorStudent WHERE TutorID = :tutor_id AND StudentID = :student_id)" :
-                            "UPDATE Labs SET LabTime = :new_time, LabType = :new_details, ClinicLocation = :new_location WHERE StudentID = :patient_id AND LabTime = :time"
+                $isTutor ? "UPDATE TestPrep SET TestPrepTime = :new_time, TestPrepType = :new_details, TestPrepLocation = :new_location WHERE StudentID = :student_id AND TestPrepTime = :time AND EXISTS (SELECT 1 FROM TutorStudent WHERE TutorID = :tutor_id AND StudentID = :student_id)" :
+                            "UPDATE TestPrep SET TestPrepTime = :new_time, TestPrepType = :new_details, TestPrepLocation = :new_location WHERE StudentID = :student_id AND TestPrepTime = :time"
             );
             break;
-        case 'checkup':
+        case 'meetup':
             $stmt = $pdo->prepare(
-                $isTutor ? "UPDATE CheckUp SET CheckTime = :new_time, CheckReason = :new_details WHERE PatientID = :patient_id AND CheckTime = :time AND DoctorID = :doctor_id" :
-                            "UPDATE CheckUp SET CheckTime = :new_time, CheckReason = :new_details WHERE PatientID = :patient_id AND CheckTime = :time"
+                $isTutor ? "UPDATE MeetUp SET MeetUpTime = :new_time, CheckReason = :new_details WHERE StudentID = :student_id AND MeetUpTime = :time AND TutorID = :tutor_id" :
+                            "UPDATE MeetUp SET MeetUpTime = :new_time, CheckReason = :new_details WHERE StudentID = :student_id AND MeetUpTime = :time"
             );
             break;
         default:
@@ -68,22 +68,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 switch ($type) {
-    case 'surgery':
+    case 'homeworkhelp':
         $stmt = $pdo->prepare(
-            $isTutor ? "SELECT SurgeryTime AS time, SurgeryType AS details FROM Surgery WHERE StudentID = :student_id AND SurgeryTime = :time AND TutorID = :tutor_id" :
-                        "SELECT SurgeryTime AS time, SurgeryType AS details FROM Surgery WHERE StudentID = :student_id AND SurgeryTime = :time"
+            $isTutor ? "SELECT HwTime AS time, HwType AS details FROM HomeworkHelp WHERE StudentID = :student_id AND HwTime = :time AND TutorID = :tutor_id" :
+                        "SELECT HwTime AS time, HwType AS details FROM HomeworkHelp WHERE StudentID = :student_id AND HwTime = :time"
         );
         break;
-    case 'lab':
+    case 'testprep':
         $stmt = $pdo->prepare(
-            $isTutor ? "SELECT LabTime AS time, LabType AS details, ClinicLocation AS location FROM Labs WHERE StudentID = :student_id AND LabTime = :time AND EXISTS (SELECT 1 FROM TutorStudent WHERE TutorID = :tutor_id AND StudentID = :student_id)" :
-                        "SELECT LabTime AS time, LabType AS details, ClinicLocation AS location FROM Labs WHERE StudentID = :student_id AND LabTime = :time"
+            $isTutor ? "SELECT TestPrepTime AS time, TestPrepType AS details, TestPrepLocation AS location FROM TestPrep WHERE StudentID = :student_id AND TestPrepTime = :time AND EXISTS (SELECT 1 FROM TutorStudent WHERE TutorID = :tutor_id AND StudentID = :student_id)" :
+                        "SELECT TestPrepTime AS time, TestPrepType AS details, TestPrepLocation AS location FROM TestPrep WHERE StudentID = :student_id AND TestPrepTime = :time"
         );
         break;
-    case 'checkup':
+    case 'meetup':
         $stmt = $pdo->prepare(
-            $isTutor ? "SELECT CheckTime AS time, CheckReason AS details FROM CheckUp WHERE StudentID = :student_id AND CheckTime = :time AND TutorID = :tutor_id" :
-                        "SELECT CheckTime AS time, CheckReason AS details FROM CheckUp WHERE StudentID = :student_id AND CheckTime = :time"
+            $isTutor ? "SELECT MeetUpTime AS time, MeetUpReason AS details FROM MeetUp WHERE StudentID = :student_id AND MeetUpTime = :time AND TutorID = :tutor_id" :
+                        "SELECT MeetUpTime AS time, MeetUpReason AS details FROM MeetUp WHERE StudentID = :student_id AND MeetUpTime = :time"
         );
         break;
     default:
@@ -129,8 +129,8 @@ if (!$appointment) {
             <br>
 
             <?php if ($type === 'lab'): ?>
-                <label for="clinic_location">Clinic Location:</label>
-                <input type="text" class="input" name="clinic_location" id="clinic_location" value="<?php echo htmlspecialchars($appointment['location']); ?>">
+                <label for="test_prep_location">Test Prep Location:</label>
+                <input type="text" class="input" name="test_prep_location" id="test_prep_location" value="<?php echo htmlspecialchars($appointment['location']); ?>">
                 <br>
             <?php endif; ?>
 
