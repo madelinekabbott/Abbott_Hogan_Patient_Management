@@ -3,25 +3,25 @@ session_start();
 require 'db_connect.php';
 include 'header.php';
 
-if (!isset($_SESSION['doctor_id'])) {
+if (!isset($_SESSION['tutor_id'])) {
     header("Location: login.php");
     exit();
 }
 
-$doctor_id = $_SESSION['doctor_id'];
+$doctor_id = $_SESSION['tutor_id'];
 
 $stmt = $pdo->prepare("
     SELECT 
-        Patient.PatientID, Patient.PatientName, Patient.DOB, Patient.Address, Patient.City 
+        Student.StudentID, Student.StudentName, Student.DOB, Student.Address, Student.City 
     FROM 
-        Patient 
+        Student 
     JOIN 
-        DoctorPatient ON Patient.PatientID = DoctorPatient.PatientID
+        TutorStudent ON Student.StudentID = TutorStudent.StudentID
     WHERE 
-        DoctorPatient.DoctorID = :doctor_id
+        TutorStudent.TutorID = :tutor_id
 ");
-$stmt->execute(['doctor_id' => $doctor_id]);
-$patients = $stmt->fetchAll();
+$stmt->execute(['tutor_id' => $tutor_id]);
+$students = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -29,12 +29,12 @@ $patients = $stmt->fetchAll();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Records</title>
-    <link rel="stylesheet" href="patient_management_style.css">
+    <title>Student Records</title>
+    <link rel="stylesheet" href="student_management_style.css">
 </head>
 <body>
     <div class="container">
-    <h2 class="header">Patient Records</h2>
+    <h2 class="header">Student Records</h2>
     <table class="table">
         <thead>
             <tr>
@@ -46,14 +46,14 @@ $patients = $stmt->fetchAll();
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($patients as $patient): ?>
+            <?php foreach ($students as $student): ?>
                 <tr>
-                    <td class="table-cell"><?php echo htmlspecialchars($patient['PatientName']); ?></td>
-                    <td class="table-cell"><?php echo htmlspecialchars($patient['DOB']); ?></td>
-                    <td class="table-cell"><?php echo htmlspecialchars($patient['Address']); ?></td>
-                    <td class="table-cell"><?php echo htmlspecialchars($patient['City']); ?></td>
+                    <td class="table-cell"><?php echo htmlspecialchars($student['StudentName']); ?></td>
+                    <td class="table-cell"><?php echo htmlspecialchars($student['DOB']); ?></td>
+                    <td class="table-cell"><?php echo htmlspecialchars($student['Address']); ?></td>
+                    <td class="table-cell"><?php echo htmlspecialchars($student['City']); ?></td>
                     <td class="table-cell">
-                        <a href="view_patient.php?patient_id=<?php echo $patient['PatientID']; ?>" class="button-link">
+                        <a href="view_student.php?student_id=<?php echo $student['StudentID']; ?>" class="button-link">
                             <button class="button">View Details</button>
                         </a>
                     </td>
