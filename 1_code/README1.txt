@@ -1,10 +1,10 @@
-This Patient Management System (PMS) centralizes essential components of patient management, allowing healthcare providers to easily manage patient records and appointment schedules within a single interface.
+This Tutoring Management System (TMS) centralizes essential components of patient management, allowing healthcare providers to easily manage patient records and appointment schedules within a single interface.
 
 --Project Overview--
-The purpose of this project is to streamline the management of patient information and scheduling within healthcare settings by providing a centralized system where healthcare providers can add, edit, and manage records and appointments. This project supports CRUD operations on patient data, making it easier for providers to organize and access essential information.
+The purpose of this project is to streamline the management of tutor and student information and scheduling within academic settings by providing a centralized system where tutors and academic administrators can add, edit, and manage records and appointments. This project supports CRUD operations on patient data, making it easier for educators to organize and access essential information.
 
 --Technology Used--
-The Patient Management System is built using:
+The Tutoring Management System is built using:
 PHP for backend logic and server-side processing
 JavaScript for interactive elements
 SQL for data management and storage
@@ -21,7 +21,7 @@ You can choose any setup that allows you to host a local PHP server and SQL data
 2. Create the Database:
   Start your server and open the SQL management tool (e.g., phpMyAdmin for XAMPP).
   Create a new database for the project.
-  Import the provided SQL file (patient_management-draft.sql) to set up the necessary tables and initial data.
+  Import the provided SQL file (student_management_final.sql) to set up the necessary tables and initial data.
 3. Configure Database Connection:
   Open db_connect.php in the project files.
   Update the username and password in db_connect.php to match your local database credentials:
@@ -32,7 +32,7 @@ You can choose any setup that allows you to host a local PHP server and SQL data
                                                       user: 3211 password: password123
 
 --Usage--
-Once installed, the Patient Management System provides an intuitive interface where healthcare providers can:
-1. Log in to view and manage patient records and appointments.
-2. Access forms to create, edit, or delete patient records as needed.
+Once installed, the Tutoring Management System provides an intuitive interface where healthcare providers can:
+1. Log in to view and manage student records and appointments.
+2. Access forms to create, edit, or delete student records as needed.
 3. Schedule, update, or cancel appointments within the system.                                                      
